@@ -1,26 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
+import html from "../groundwork.html?raw";
+
+function inject(): string {
+  const url = process.env.SUPABASE_URL || "";
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY || "";
+  const snippet = `<script>window.__GW_ENV=${JSON.stringify({ SUPABASE_URL: url, SUPABASE_KEY: key })};</script>`;
+  // Inject right after <head> so it's defined before any in-page script runs.
+  return html.replace(/<head>/i, `<head>${snippet}`);
+}
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  server: {
+    handlers: {
+      GET: async () =>
+        new Response(inject(), {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "no-store",
+          },
+        }),
+    },
+  },
+  component: () => null,
 });
-
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
-}
