@@ -4171,8 +4171,10 @@ let _supabase = null;
 let _authUser = null;
 
 function _getSupaClient() {
-  const url = localStorage.getItem('gw-supa-url') || '';
-  const key = localStorage.getItem('gw-supa-key') || '';
+  // Prefer server-injected creds; fall back to user-entered ones in localStorage.
+  const injected = (window.__GW_ENV || {});
+  const url = injected.SUPABASE_URL || localStorage.getItem('gw-supa-url') || '';
+  const key = injected.SUPABASE_KEY || localStorage.getItem('gw-supa-key') || '';
   if (!url || !key) return null;
   if (_supabase) return _supabase;
   try {
