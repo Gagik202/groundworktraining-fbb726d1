@@ -3690,7 +3690,7 @@ function updateNutritionUI() {
   const mealLog=document.getElementById('meal-log');
   if (mealLog) {
     mealLog.innerHTML=(data.meals||[]).map((m,i)=>`<div class="meal-row">
-      <div class="meal-name-t">${m.name}${m.allergy?` <span style="color:var(--amber);font-family:var(--mono);font-size:9px">${m.allergy}</span>`:''}</div>
+      <div class="meal-name-t">${esc(m.name)}${m.allergy?` <span style="color:var(--amber);font-family:var(--mono);font-size:9px">${esc(m.allergy)}</span>`:''}</div>
       <div class="meal-macros">${m.calories}kcal · ${m.protein}g pro · ${m.carbs}g carb · ${m.fat}g fat</div>
       <button class="meal-del-btn" onclick="deleteMeal(${i})">✕</button>
     </div>`).join('');
