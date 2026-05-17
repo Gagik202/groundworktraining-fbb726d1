@@ -3765,8 +3765,8 @@ function renderAITodayProgramPanel() {
     return `<div class="program-item ${isActive?'active-prog':''}" onclick="setActiveAIProgram('${prog.id}')">
       <div class="prog-radio ${isActive?'checked':''}"></div>
       <div>
-        <div class="prog-name-t">${prog.name}</div>
-        <div class="prog-meta-t">${date} · ${prog.profile?.level||'intermediate'} · ${prog.profile?.goal||'Strength'}</div>
+        <div class="prog-name-t">${esc(prog.name)}</div>
+        <div class="prog-meta-t">${date} · ${esc(prog.profile?.level||'intermediate')} · ${esc(prog.profile?.goal||'Strength')}</div>
       </div>
       ${prog.id!=='builtin'?`<button class="prog-del-btn" onclick="event.stopPropagation();deleteAIProgram('${prog.id}')" title="Delete">✕</button>`:''}
     </div>`;
