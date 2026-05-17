@@ -3292,7 +3292,7 @@ function renderSchedule() {
       const endMin = eh*60+em;
       const hp = Math.max(20, endMin/60*rowH);
       evHtml+=`<div class="sch-event" style="top:0;height:${hp}px;left:8px;right:8px;background:${col}15;border-left-color:${col}">
-        <div class="sch-event-title">${ev.title||'Task'} <span style="opacity:.45;font-size:9px">(cont.)</span></div>
+        <div class="sch-event-title">${esc(ev.title||'Task')} <span style="opacity:.45;font-size:9px">(cont.)</span></div>
         <div class="sch-event-time">00:00 – ${ev.end}</div></div>`;
     } else if (overnight) {
       // starts today, crosses midnight: render start → bottom
@@ -3300,7 +3300,7 @@ function renderSchedule() {
       const top = startMin/60*rowH;
       const hp = Math.max(20, height - top);
       evHtml+=`<div class="sch-event" style="top:${top}px;height:${hp}px;left:8px;right:8px;background:${col}15;border-left-color:${col}">
-        <div class="sch-event-title">${ev.title||'Task'} <span style="opacity:.45;font-size:9px">(→ next day)</span></div>
+        <div class="sch-event-title">${esc(ev.title||'Task')} <span style="opacity:.45;font-size:9px">(→ next day)</span></div>
         <div class="sch-event-time">${ev.start} – 00:00</div></div>`;
     } else {
       const startMin = sh*60+sm;
@@ -3308,7 +3308,7 @@ function renderSchedule() {
       const top = startMin/60*rowH;
       const hp = Math.max(20,(endMin-startMin)/60*rowH);
       evHtml+=`<div class="sch-event" style="top:${top}px;height:${hp}px;left:8px;right:8px;background:${col}15;border-left-color:${col}">
-        <div class="sch-event-title">${ev.title||'Task'}</div>
+        <div class="sch-event-title">${esc(ev.title||'Task')}</div>
         <div class="sch-event-time">${ev.start} – ${ev.end}</div></div>`;
     }
   });
@@ -3656,7 +3656,8 @@ function deleteMeal(idx) {
 function updateNutritionUI() {
   const today=todayISO();
   const data=state.nutrition[today]||{calories:0,protein:0,carbs:0,fat:0,meals:[]};
-  const goals={calories:2200,protein:150,carbs:250,fat:70};
+  const t=state.nutritionTargets||{};
+  const goals={calories:t.calories||2200,protein:t.protein||150,carbs:t.carbs||250,fat:t.fats||t.fat||70};
   ['calories','protein','carbs','fat'].forEach(k=>{
     if (macroCharts[k]) {
       macroCharts[k].data.datasets[0].data=[data[k],Math.max(0,goals[k]-data[k])];
@@ -3707,19 +3708,21 @@ function renderWater() {
   const count=state.water[today]||0;
   const c=document.getElementById('water-glasses');
   if (!c) return;
-  c.innerHTML=Array.from({length:8},(_,i)=>`<div class="water-cup ${i<count?'filled':''}">
+  const goal=((state.nutritionTargets||{}).water)||8;
+  c.innerHTML=Array.from({length:goal},(_,i)=>`<div class="water-cup ${i<count?'filled':''}">
     ${i<count?`<svg width="12" height="16" fill="none" viewBox="0 0 12 16"><path d="M6 2.5a3.5 3.5 0 11-7 0C-.5 0 6 0 6 2.5z" fill="#6eb6ff" transform="translate(3,5)"/></svg>`:''}
   </div>`).join('');
-  document.getElementById('water-label').textContent=`${count} / 8`;
+  document.getElementById('water-label').textContent=`${count} / ${goal}`;
 }
 
 function addWater() {
   const today=todayISO();
   if (!state.water[today]) state.water[today]=0;
-  if (state.water[today]<8) {
+  const waterGoal=((state.nutritionTargets||{}).water)||8;
+  if (state.water[today]<waterGoal) {
     state.water[today]++;
     saveState(); renderWater();
-    if (state.water[today]===8) showToast('Hydration goal met!','t-success','');
+    if (state.water[today]===waterGoal) showToast('Hydration goal met!','t-success','');
     checkMilestones();
   }
 }
@@ -4324,8 +4327,7 @@ function _updateAuthUI() {
     if (signoutEl) signoutEl.style.display='none';
     if (btn) { btn.classList.remove('signed-in'); btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>'; }
   const dbSetupEl = document.getElementById('ua-dbsetup');
-  const ADMIN_EMAIL = 'ghazaryang605@gmail.com';
-  if (dbSetupEl) dbSetupEl.style.display = (signedIn && _authUser?.email?.toLowerCase() === ADMIN_EMAIL) ? 'flex' : 'none';
+  if (dbSetupEl) dbSetupEl.style.display = 'none';
 }
 }
 
