@@ -4273,6 +4273,7 @@ async function authSignOut() {
   uaClose();
   _updateAuthUI();
   showToast('Signed out.','t-info','');
+  location.reload();
 }
 
 function authSaveConfig() {
@@ -4364,6 +4365,7 @@ function _initAuth() {
   const sb = _getSupaClient();
   if (sb) {
     sb.auth.onAuthStateChange(async (ev, session) => {
+      if (ev==='SIGNED_OUT') { _authUser = null; _updateAuthUI(); return; }
       _authUser = session?.user || null;
       _updateAuthUI();
       if (ev==='SIGNED_IN') {
