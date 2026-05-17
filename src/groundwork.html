@@ -2756,12 +2756,20 @@ function updateHeader() {
   document.getElementById('xp-bar').style.width = (info.xpInLevel/info.xpNeeded*100)+'%';
 }
 
+// ─── HTML escape helper (XSS guard for user-controlled text) ─────
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 // ─── TOAST ───────────────────────────────────────────────────────
 function showToast(msg, type='t-success', icon='') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = `toast ${type}`;
-  t.innerHTML = `${icon?`<span class="toast-icon">${icon}</span>`:''}${msg}`;
+  t.innerHTML = `${icon?`<span class="toast-icon">${icon}</span>`:''}${esc(msg)}`;
   c.appendChild(t);
   setTimeout(()=>t.remove(), 3200);
 }
@@ -2961,12 +2969,12 @@ function renderExercises(idx) {
     grid.innerHTML += `
       <div class="ex-card ${isDone?'done':''}" id="excard-${i}">
         <div class="ex-top">
-          <div class="ex-name">${ex.name}</div>
+          <div class="ex-name">${esc(ex.name)}</div>
           <div class="ex-badge">${ex.sets}×${ex.reps}</div>
         </div>
-        <div class="ex-form">${ex.form}</div>
+        <div class="ex-form">${esc(ex.form)}</div>
         <div class="ex-chips">
-          <span class="ex-chip">${ex.muscle}</span>
+          <span class="ex-chip">${esc(ex.muscle)}</span>
           <span class="ex-chip">+${ex.xp*(ex.sets||3)} XP</span>
         </div>
         <button class="ex-done-btn ${isDone?'checked':''}" onclick="toggleExercise(${idx},${i},event)">
@@ -3226,9 +3234,9 @@ function renderCalendarDetails() {
     return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
       <div style="width:3px;height:36px;background:${col};border-radius:2px;flex-shrink:0"></div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${ev.title}</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim)">${ev.start} – ${ev.end} · ${ev.type}${ev.recurrence&&ev.recurrence!=='none'?' · recurring':''}</div>
-        ${ev.notes?`<div style="font-size:11px;color:var(--dim);margin-top:2px">${ev.notes}</div>`:''}
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(ev.title)}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim)">${ev.start} – ${ev.end} · ${esc(ev.type)}${ev.recurrence&&ev.recurrence!=='none'?' · recurring':''}</div>
+        ${ev.notes?`<div style="font-size:11px;color:var(--dim);margin-top:2px">${esc(ev.notes)}</div>`:''}
       </div>
       ${isDirect?`<button class="btn btn-sm btn-danger" onclick="deleteEventDirect('${selectedCalendarDate}',${i})">✕</button>`:''}
     </div>`;
@@ -3433,11 +3441,11 @@ function renderGoals() {
     if (pct>=100 && !g.achieved) { g.achieved=true; saveState(); }
     return `<div class="goal-item ${g.achieved?'achieved':''}">
       <div class="goal-info">
-        <div class="goal-name">${g.name}</div>
+        <div class="goal-name">${esc(g.name)}</div>
         <div class="goal-track"><div class="goal-fill" style="width:${pct}%;background:${g.color||'#5af78e'}"></div></div>
         <div class="goal-meta">
           <span style="color:${g.color||'#5af78e'}">${Math.round(pct)}%</span>
-          <span>${g.current} / ${g.target} ${g.unit||''}${g.desc?` · ${g.desc}`:''}</span>
+          <span>${g.current} / ${g.target} ${esc(g.unit||'')}${g.desc?` · ${esc(g.desc)}`:''}</span>
         </div>
       </div>
       ${g.achieved
@@ -3682,7 +3690,7 @@ function updateNutritionUI() {
   const mealLog=document.getElementById('meal-log');
   if (mealLog) {
     mealLog.innerHTML=(data.meals||[]).map((m,i)=>`<div class="meal-row">
-      <div class="meal-name-t">${m.name}${m.allergy?` <span style="color:var(--amber);font-family:var(--mono);font-size:9px">${m.allergy}</span>`:''}</div>
+      <div class="meal-name-t">${esc(m.name)}${m.allergy?` <span style="color:var(--amber);font-family:var(--mono);font-size:9px">${esc(m.allergy)}</span>`:''}</div>
       <div class="meal-macros">${m.calories}kcal · ${m.protein}g pro · ${m.carbs}g carb · ${m.fat}g fat</div>
       <button class="meal-del-btn" onclick="deleteMeal(${i})">✕</button>
     </div>`).join('');
@@ -3757,8 +3765,8 @@ function renderAITodayProgramPanel() {
     return `<div class="program-item ${isActive?'active-prog':''}" onclick="setActiveAIProgram('${prog.id}')">
       <div class="prog-radio ${isActive?'checked':''}"></div>
       <div>
-        <div class="prog-name-t">${prog.name}</div>
-        <div class="prog-meta-t">${date} · ${prog.profile?.level||'intermediate'} · ${prog.profile?.goal||'Strength'}</div>
+        <div class="prog-name-t">${esc(prog.name)}</div>
+        <div class="prog-meta-t">${date} · ${esc(prog.profile?.level||'intermediate')} · ${esc(prog.profile?.goal||'Strength')}</div>
       </div>
       ${prog.id!=='builtin'?`<button class="prog-del-btn" onclick="event.stopPropagation();deleteAIProgram('${prog.id}')" title="Delete">✕</button>`:''}
     </div>`;
@@ -3788,8 +3796,8 @@ function renderAISavedWorkouts() {
   }
   c.innerHTML=state.savedWorkouts.map((w,i)=>`<div class="saved-card">
     <div class="saved-info">
-      <div class="saved-name">${w.name}</div>
-      <div class="saved-meta">${w.sets} sets · ${w.reps} · ${w.muscle}</div>
+      <div class="saved-name">${esc(w.name)}</div>
+      <div class="saved-meta">${w.sets} sets · ${esc(String(w.reps))} · ${esc(w.muscle)}</div>
     </div>
     <div class="saved-actions">
       <button class="btn btn-sm" onclick="applySavedWorkout(${i})">Add to ${DAYS[currentDayIndex]}</button>
@@ -3967,10 +3975,20 @@ ${dayAssignments}
 
 Return ONLY the JSON object. No other text.`;
 
-  // Proxied through our server route (Lovable AI Gateway) — no browser key, no CORS issues.
+  // Proxied through our server route (Lovable AI Gateway) — requires signed-in user.
+  let _aiToken = null;
+  try {
+    if (typeof sb !== 'undefined' && sb?.auth?.getSession) {
+      const { data } = await sb.auth.getSession();
+      _aiToken = data?.session?.access_token || null;
+    }
+  } catch {}
+  if (!_aiToken) {
+    throw new Error('Sign in to generate an AI workout.');
+  }
   const response = await fetch('/api/ai-workout', {
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{'Content-Type':'application/json', 'Authorization': `Bearer ${_aiToken}`},
     body:JSON.stringify({ systemPrompt, userPrompt }),
   });
 

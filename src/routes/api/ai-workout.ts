@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
 
 type Body = { systemPrompt?: string; userPrompt?: string };
 
@@ -6,14 +7,35 @@ export const Route = createFileRoute("/api/ai-workout")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // ── Auth check: require a valid Supabase user bearer token ──
+        const authHeader = request.headers.get("authorization") || "";
+        if (!authHeader.startsWith("Bearer ")) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+        const token = authHeader.slice("Bearer ".length).trim();
+        if (!token) return new Response("Unauthorized", { status: 401 });
+
+        const SUPABASE_URL = process.env.SUPABASE_URL;
+        const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+          return new Response("Server auth not configured", { status: 500 });
+        }
+        const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
+        const { data: claims, error: authErr } = await sb.auth.getClaims(token);
+        if (authErr || !claims?.claims?.sub) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
         let body: Body;
         try {
           body = (await request.json()) as Body;
         } catch {
           return new Response("Invalid JSON", { status: 400 });
         }
-        const systemPrompt = (body.systemPrompt || "").toString();
-        const userPrompt = (body.userPrompt || "").toString();
+        const systemPrompt = (body.systemPrompt || "").toString().slice(0, 8000);
+        const userPrompt = (body.userPrompt || "").toString().slice(0, 8000);
         if (!userPrompt) return new Response("Missing userPrompt", { status: 400 });
 
         const apiKey = process.env.LOVABLE_API_KEY;
