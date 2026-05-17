@@ -2844,7 +2844,7 @@ function showAchievement(m) {
   document.getElementById('ach-icon').textContent = m.icon;
   document.getElementById('ach-name').textContent = m.name;
   const prog = getMilestoneProgress(m);
-  document.getElementById('ach-desc').innerHTML = `${m.desc}<br><span style="font-family:var(--mono);font-size:11px;color:var(--green)">${prog.value} / ${prog.req} — ${prog.percent}%</span>`;
+  document.getElementById('ach-desc').innerHTML = `${esc(m.desc)}<br><span style="font-family:var(--mono);font-size:11px;color:var(--green)">${esc(String(prog.value))} / ${esc(String(prog.req))} — ${esc(String(prog.percent))}%</span>`;
   document.getElementById('achievement-popup').classList.add('show');
   if (window._achClose) document.removeEventListener('click',window._achClose);
   window._achClose = ()=>closeAchievement();
@@ -3155,7 +3155,7 @@ function addLog(msg) {
   if (!log) return;
   const item = document.createElement('div');
   item.className = 'log-item';
-  item.innerHTML = `<span class="log-time">${t}</span><span>${msg}</span>`;
+  item.innerHTML = `<span class="log-time">${esc(t)}</span><span>${esc(msg)}</span>`;
   log.prepend(item);
   while (log.children.length>20) log.removeChild(log.lastChild);
 }
