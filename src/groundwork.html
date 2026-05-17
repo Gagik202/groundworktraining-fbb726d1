@@ -3441,11 +3441,11 @@ function renderGoals() {
     if (pct>=100 && !g.achieved) { g.achieved=true; saveState(); }
     return `<div class="goal-item ${g.achieved?'achieved':''}">
       <div class="goal-info">
-        <div class="goal-name">${g.name}</div>
+        <div class="goal-name">${esc(g.name)}</div>
         <div class="goal-track"><div class="goal-fill" style="width:${pct}%;background:${g.color||'#5af78e'}"></div></div>
         <div class="goal-meta">
           <span style="color:${g.color||'#5af78e'}">${Math.round(pct)}%</span>
-          <span>${g.current} / ${g.target} ${g.unit||''}${g.desc?` · ${g.desc}`:''}</span>
+          <span>${g.current} / ${g.target} ${esc(g.unit||'')}${g.desc?` · ${esc(g.desc)}`:''}</span>
         </div>
       </div>
       ${g.achieved
