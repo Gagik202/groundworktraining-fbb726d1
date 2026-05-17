@@ -4383,7 +4383,8 @@ function _initAuth() {
           state.nutritionTargets = null;
           saveState();
         }
-        if (!state.nutritionTargets) setTimeout(()=>openNutritionOnboarding(), 400);
+        const hasRealTargets = state.nutritionTargets && !state.nutritionTargets.skipped;
+        if (!hasRealTargets) setTimeout(()=>openNutritionOnboarding(), 400);
         else _syncUp();
       }
     });
@@ -4392,7 +4393,8 @@ function _initAuth() {
       _updateAuthUI();
       if (_authUser) {
         await _syncDown();
-        if (!state.nutritionTargets) setTimeout(()=>openNutritionOnboarding(), 400);
+        const _hasRealTargets = state.nutritionTargets && !state.nutritionTargets.skipped;
+        if (!_hasRealTargets) setTimeout(()=>openNutritionOnboarding(), 400);
       } else if (!localStorage.getItem('gw-seen-auth')) authPanel('login');
     });
   } else {
