@@ -4146,9 +4146,7 @@ function resetProgress() {
   localStorage.removeItem(STORAGE_KEY); location.reload();
 }
 
-window.addEventListener('keydown',e=>{
-  if (e.altKey&&e.shiftKey&&e.key.toLowerCase()==='q') { e.preventDefault(); resetProgress(); }
-});
+// Reset hotkey removed — use the "Remove user data" item in the account menu.
 
 // ─── VIEW SWITCHING ────────────────────────────────────────────────
 function switchView(view) {
