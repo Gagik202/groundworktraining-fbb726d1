@@ -3796,8 +3796,8 @@ function renderAISavedWorkouts() {
   }
   c.innerHTML=state.savedWorkouts.map((w,i)=>`<div class="saved-card">
     <div class="saved-info">
-      <div class="saved-name">${w.name}</div>
-      <div class="saved-meta">${w.sets} sets · ${w.reps} · ${w.muscle}</div>
+      <div class="saved-name">${esc(w.name)}</div>
+      <div class="saved-meta">${w.sets} sets · ${esc(String(w.reps))} · ${esc(w.muscle)}</div>
     </div>
     <div class="saved-actions">
       <button class="btn btn-sm" onclick="applySavedWorkout(${i})">Add to ${DAYS[currentDayIndex]}</button>
