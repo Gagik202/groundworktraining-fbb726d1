@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0c0c0c">
 <title>Groundwork — Train Smarter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
@@ -1743,33 +1743,40 @@ body {
 }
 
 /* ─── AUTH OVERLAY ─── */
-#auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+/* ─── AUTH OVERLAY (landing page style) ─── */
+#auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:1;transition:opacity .3s;}
 #auth-overlay.hidden{display:none;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.auth-box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px 28px;animation:fadeIn .2s ease;}
-.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
-.auth-logo-mark{width:26px;height:26px;background:var(--text);border-radius:4px;display:grid;place-items:center;flex-shrink:0;}
-.auth-logo-name{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--white);letter-spacing:-0.01em;}
-.auth-title{font-family:var(--sans);font-size:19px;font-weight:700;color:var(--white);margin-bottom:3px;letter-spacing:-0.02em;}
-.auth-sub{font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:20px;letter-spacing:0.03em;}
-.auth-form{display:flex;flex-direction:column;gap:11px;}
-.auth-field label{display:block;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px;}
-.auth-field input{width:100%;background:var(--lift);border:1px solid var(--border2);color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;border-radius:var(--r);outline:none;transition:border-color .15s;}
-.auth-field input:focus{border-color:var(--mid);}
-.auth-btn{width:100%;font-family:var(--sans);font-size:13px;font-weight:700;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:var(--r);cursor:pointer;transition:opacity .15s;margin-top:4px;}
-.auth-btn:hover{opacity:.88;}
-.auth-btn:disabled{opacity:.38;cursor:default;}
-.auth-switch{text-align:center;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:16px;}
-.auth-switch a{color:var(--text);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
-.auth-switch a:hover{color:var(--white);}
-.auth-msg{font-family:var(--mono);font-size:10px;padding:8px 10px;border-radius:var(--r);display:none;margin-top:4px;}
-.auth-msg.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:var(--red);}
-.auth-msg.ok{background:rgba(90,247,142,.08);border:1px solid rgba(90,247,142,.2);color:var(--green);}
-.auth-sep{height:1px;background:var(--border);margin:16px 0;}
-.auth-guest{width:100%;font-family:var(--mono);font-size:10px;padding:8px;background:none;border:1px solid var(--border);color:var(--dim);border-radius:var(--r);cursor:pointer;transition:all .15s;margin-top:2px;}
-.auth-guest:hover{border-color:var(--border2);color:var(--text);}
-.setup-info{background:var(--lift);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;margin-bottom:14px;font-family:var(--mono);font-size:9px;color:var(--dim);line-height:1.8;}
-.setup-info code{color:var(--green);font-size:8.5px;display:block;margin-top:4px;word-break:break-all;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.auth-box{width:100%;max-width:400px;background:#111111;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px 36px;animation:fadeIn .3s ease;position:relative;}
+.auth-logo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:4px;color:#b8f55a;margin-bottom:6px;}
+.auth-sub-line{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,240,240,0.4);margin-bottom:28px;letter-spacing:0.03em;}
+/* Tabs */
+.auth-tabs{display:flex;background:#181818;border-radius:100px;padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:9px;border-radius:100px;border:none;background:transparent;color:rgba(240,240,240,0.4);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:#1c1c1c;color:#f0f0f0;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.auth-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#f0f0f0;margin-bottom:4px;}
+.auth-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(240,240,240,0.4);margin-bottom:20px;letter-spacing:0.05em;text-transform:uppercase;}
+.auth-form{display:flex;flex-direction:column;gap:12px;}
+.auth-field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(240,240,240,0.45);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;}
+.auth-field input{width:100%;background:#181818;border:1px solid rgba(255,255,255,0.08);color:#f0f0f0;font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;border-radius:10px;outline:none;transition:border-color .2s;}
+.auth-field input:focus{border-color:rgba(184,245,90,0.5);}
+/* divider */
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:rgba(240,240,240,0.3);font-size:11px;font-family:'IBM Plex Mono',monospace;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.07);}
+.auth-btn{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;padding:13px;background:#b8f55a;color:#0a0a0a;border:none;border-radius:12px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.auth-btn:hover{background:#cdfb72;transform:translateY(-1px);box-shadow:0 8px 24px rgba(184,245,90,0.25);}
+.auth-btn:disabled{opacity:.38;cursor:default;transform:none;box-shadow:none;}
+.auth-switch{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,240,240,0.4);margin-top:16px;}
+.auth-switch a{color:#b8f55a;cursor:pointer;text-decoration:none;}
+.auth-switch a:hover{text-decoration:underline;}
+.auth-msg{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:8px 10px;border-radius:8px;display:none;margin-top:4px;}
+.auth-msg.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:#ff6b6b;}
+.auth-msg.ok{background:rgba(184,245,90,.08);border:1px solid rgba(184,245,90,.2);color:#b8f55a;}
+.auth-sep{height:1px;background:rgba(255,255,255,0.07);margin:16px 0;}
+.auth-guest{width:100%;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:10px;background:none;border:1px solid rgba(255,255,255,0.08);color:rgba(240,240,240,0.4);border-radius:100px;cursor:pointer;transition:all .2s;margin-top:2px;}
+.auth-guest:hover{border-color:rgba(255,255,255,0.2);color:#f0f0f0;}
+.setup-info{background:#181818;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(240,240,240,0.5);line-height:1.9;}
+.setup-info code{color:#b8f55a;font-size:8.5px;display:block;margin-top:4px;word-break:break-all;}
 /* ─── USER AVATAR ─── */
 .ua-wrap{position:relative;}
 .ua-btn{width:28px;height:28px;border-radius:50%;background:var(--lift);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mid);font-family:var(--mono);font-size:10px;font-weight:600;transition:border-color .15s,color .15s;flex-shrink:0;}
@@ -1789,47 +1796,38 @@ body {
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="hidden">
 <div class="auth-box">
-  <div class="auth-logo">
-    <div class="auth-logo-mark">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-        <rect x="1" y="1" width="5" height="5" rx="1" fill="#0c0c0c"/>
-        <rect x="8" y="1" width="5" height="5" rx="1" fill="#0c0c0c"/>
-        <rect x="1" y="8" width="5" height="5" rx="1" fill="#0c0c0c"/>
-        <rect x="8" y="8" width="5" height="5" rx="1" fill="#0c0c0c" opacity=".4"/>
-      </svg>
-    </div>
-    <span class="auth-logo-name">Groundwork</span>
+  <div class="auth-logo">GROUNDWORK</div>
+  <div class="auth-sub-line">Your AI-powered fitness platform</div>
+
+  <!-- TABS (login / register) -->
+  <div class="auth-tabs" id="auth-tabs-row">
+    <button class="auth-tab active" id="tab-login" onclick="authPanel('login')">Sign in</button>
+    <button class="auth-tab" id="tab-register" onclick="authPanel('register')">Sign up</button>
   </div>
 
   <!-- LOGIN -->
   <div id="ap-login">
-    <div class="auth-title">Welcome back</div>
-    <div class="auth-sub">SIGN IN TO SYNC ACROSS DEVICES</div>
     <div class="auth-form">
       <div class="auth-field"><label>Email</label><input type="email" id="a-email" placeholder="you@example.com" autocomplete="email"></div>
       <div class="auth-field"><label>Password</label><input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password"></div>
       <div class="auth-msg err" id="a-err"></div>
-      <button class="auth-btn" id="a-login-btn" onclick="authLogin()">Sign in</button>
+      <button class="auth-btn" id="a-login-btn" onclick="authLogin()">Sign in →</button>
     </div>
-    <div class="auth-sep"></div>
+    <div class="auth-divider">or</div>
     <button class="auth-guest" onclick="authGuest()">Continue without account →</button>
-    <div class="auth-switch" style="margin-top:12px">No account? <a onclick="authPanel('register')">Create one free</a></div>
   </div>
 
   <!-- REGISTER -->
   <div id="ap-register" style="display:none">
-    <div class="auth-title">Create account</div>
-    <div class="auth-sub">FREE FOREVER — SYNCS AUTOMATICALLY</div>
     <div class="auth-form">
       <div class="auth-field"><label>Email</label><input type="email" id="r-email" placeholder="you@example.com" autocomplete="email"></div>
       <div class="auth-field"><label>Password</label><input type="password" id="r-pass" placeholder="Min 6 characters" autocomplete="new-password"></div>
       <div class="auth-msg err" id="r-err"></div>
       <div class="auth-msg ok" id="r-ok"></div>
-      <button class="auth-btn" id="r-btn" onclick="authRegister()">Create account</button>
+      <button class="auth-btn" id="r-btn" onclick="authRegister()">Create free account →</button>
     </div>
-    <div class="auth-sep"></div>
+    <div class="auth-divider">or</div>
     <button class="auth-guest" onclick="authGuest()">Continue without account →</button>
-    <div class="auth-switch" style="margin-top:12px">Have an account? <a onclick="authPanel('login')">Sign in</a></div>
   </div>
 
   <!-- SETUP -->
@@ -1837,7 +1835,7 @@ body {
     <div class="auth-title">Database setup</div>
     <div class="auth-sub">CONNECT YOUR FREE SUPABASE PROJECT</div>
     <div class="setup-info">
-      1. Go to <strong style="color:var(--text)">supabase.com</strong> → New project (free tier)<br>
+      1. Go to <strong style="color:#f0f0f0">supabase.com</strong> → New project (free tier)<br>
       2. Settings → API → copy Project URL + anon key<br>
       3. SQL Editor → New query → paste &amp; run:
       <code>create table user_state (user_id uuid primary key references auth.users on delete cascade, state jsonb default '{}', updated_at timestamptz default now()); alter table user_state enable row level security; create policy "own" on user_state for all using (auth.uid()=user_id);</code>
@@ -4216,6 +4214,18 @@ function authPanel(p) {
     const el = document.getElementById(id);
     if (el) el.style.display='none';
   });
+  // Sync tab highlights
+  const tabsRow = document.getElementById('auth-tabs-row');
+  if (tabsRow) {
+    tabsRow.style.display = p === 'setup' ? 'none' : 'flex';
+    const tl = document.getElementById('tab-login');
+    const tr = document.getElementById('tab-register');
+    if (tl) tl.classList.toggle('active', p === 'login');
+    if (tr) tr.classList.toggle('active', p === 'register');
+  }
+  // Check URL param on load
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('auth')) url.searchParams.delete('auth'), history.replaceState({}, '', url);
 }
 
 function authHide() {
@@ -4395,7 +4405,10 @@ function _initAuth() {
         await _syncDown();
         const _hasRealTargets = state.nutritionTargets && !state.nutritionTargets.skipped;
         if (!_hasRealTargets) setTimeout(()=>openNutritionOnboarding(), 400);
-      } else if (!localStorage.getItem('gw-seen-auth')) authPanel('login');
+      } else if (!localStorage.getItem('gw-seen-auth')) {
+        const _ap = new URLSearchParams(window.location.search).get('auth');
+        authPanel(_ap === 'signup' ? 'register' : 'login');
+      }
     });
   } else {
     _updateAuthUI();
