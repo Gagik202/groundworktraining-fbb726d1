@@ -4264,14 +4264,18 @@ async function authRegister() {
 }
 
 async function authSignOut() {
-  // Always nuke all Supabase session keys first so session can't be restored on reload
+  // Nuke all storage first so session can't be restored on reload
   try {
     Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem('gw-seen-auth');
   } catch(e) {}
-  // Then try to tell Supabase server the session is over
+  // Try signOut with a 2s timeout — if it hangs, skip it and reload anyway
   try {
     const sb = _getSupaClient();
-    if (sb) await sb.auth.signOut({ scope: 'local' });
+    if (sb) await Promise.race([
+      sb.auth.signOut({ scope: 'local' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
+    ]);
   } catch(e) {}
   _authUser = null;
   uaClose();
@@ -4412,7 +4416,7 @@ async function removeAllUserData() {
   const sb = _getSupaClient();
   if (sb && _authUser) {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
-    try { await sb.auth.signOut({ scope: 'local' }); } catch(e) {}
+    try { await Promise.race([sb.auth.signOut({ scope: 'local' }), new Promise((_, rej) => setTimeout(() => rej(), 2000))]); } catch(e) {}
   }
   _authUser = null;
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
