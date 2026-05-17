@@ -4316,7 +4316,10 @@ function _updateAuthUI() {
     if (signupEl) signupEl.style.display='flex';
     if (signoutEl) signoutEl.style.display='none';
     if (btn) { btn.classList.remove('signed-in'); btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>'; }
-  }
+  const dbSetupEl = document.getElementById('ua-dbsetup');
+  const ADMIN_EMAIL = 'ghazaryang605@gmail.com';
+  if (dbSetupEl) dbSetupEl.style.display = (signedIn && _authUser?.email?.toLowerCase() === ADMIN_EMAIL) ? 'flex' : 'none';
+}
 }
 
 async function _syncUp() {
