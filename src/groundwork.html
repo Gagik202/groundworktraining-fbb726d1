@@ -3975,10 +3975,20 @@ ${dayAssignments}
 
 Return ONLY the JSON object. No other text.`;
 
-  // Proxied through our server route (Lovable AI Gateway) — no browser key, no CORS issues.
+  // Proxied through our server route (Lovable AI Gateway) — requires signed-in user.
+  let _aiToken = null;
+  try {
+    if (typeof sb !== 'undefined' && sb?.auth?.getSession) {
+      const { data } = await sb.auth.getSession();
+      _aiToken = data?.session?.access_token || null;
+    }
+  } catch {}
+  if (!_aiToken) {
+    throw new Error('Sign in to generate an AI workout.');
+  }
   const response = await fetch('/api/ai-workout', {
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{'Content-Type':'application/json', 'Authorization': `Bearer ${_aiToken}`},
     body:JSON.stringify({ systemPrompt, userPrompt }),
   });
 
