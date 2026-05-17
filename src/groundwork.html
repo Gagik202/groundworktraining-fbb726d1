@@ -4378,9 +4378,13 @@ function _initAuth() {
       if (ev==='SIGNED_IN') {
         authHide();
         const had = await _syncDown();
-        // First-time signup → no nutrition targets in cloud → run onboarding
+        // No cloud data found → treat as fresh account, clear local targets and run onboarding
+        if (!had) {
+          state.nutritionTargets = null;
+          saveState();
+        }
         if (!state.nutritionTargets) setTimeout(()=>openNutritionOnboarding(), 400);
-        else if (!had) _syncUp();
+        else _syncUp();
       }
     });
     sb.auth.getSession().then(async ({data:{session}}) => {
