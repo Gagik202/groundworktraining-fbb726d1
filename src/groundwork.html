@@ -4333,19 +4333,22 @@ async function _syncUp() {
 
 async function _syncDown() {
   const sb = _getSupaClient();
-  if (!sb || !_authUser) return;
+  if (!sb || !_authUser) return false;
   try {
-    const {data,error} = await sb.from('user_state').select('state').eq('user_id',_authUser.id).single();
-    if (!error && data?.state) {
-      const cloud = JSON.parse(data.state);
-      if ((cloud.totalXP||0) >= (state.totalXP||0)) {
+    const {data,error} = await sb.from('user_state').select('state').eq('user_id',_authUser.id).maybeSingle();
+    if (error) return false;
+    if (data?.state) {
+      const cloud = typeof data.state === 'string' ? JSON.parse(data.state) : data.state;
+      if (cloud && typeof cloud === 'object') {
         state = {...state, ...cloud};
-        saveState();
+        _origSave ? _origSave() : saveState();
         renderTodayView(); updateHeader(); updateSidebar();
-        showToast('Progress synced from cloud ☁','t-success','');
+        showToast('Loaded your data from the cloud','t-success','');
+        return true;
       }
     }
-  } catch(e) {}
+    return false;
+  } catch(e) { return false; }
 }
 
 function _initAuth() {
