@@ -4261,9 +4261,15 @@ async function authRegister() {
 }
 
 async function authSignOut() {
-  const sb = _getSupaClient();
-  if (sb) await sb.auth.signOut();
+  try {
+    const sb = _getSupaClient();
+    if (sb) await sb.auth.signOut();
+  } catch(e) {}
   _authUser = null;
+  _supabase = null;
+  try {
+    Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k));
+  } catch(e) {}
   uaClose();
   _updateAuthUI();
   showToast('Signed out.','t-info','');
@@ -4401,8 +4407,11 @@ async function removeAllUserData() {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
     try { await sb.auth.signOut(); } catch(e) {}
   }
+  _authUser = null;
+  _supabase = null;
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
   try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
+  try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
   location.reload();
 }
 
