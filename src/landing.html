@@ -1000,9 +1000,9 @@
   }
 
   function goToApp() {
-    const activeTab = document.getElementById('tab-signup').classList.contains('active') ? 'signup' : 'login';
-    window.location.href = '/app?auth=' + activeTab;
-  }
+  const activeTab = document.getElementById('tab-signup').classList.contains('active') ? 'signup' : 'login';
+  window.location.href = 'groundwork.html?mode=' + activeTab; // Use ?mode= to pass the state
+}
 
   // Show modal after 3s if not dismissed
   let modalShown = false;
