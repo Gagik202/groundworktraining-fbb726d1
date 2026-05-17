@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groundwork — Train Smarter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #181818;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.45);
+    --green: #b8f55a;
+    --green-dim: rgba(184,245,90,0.12);
+    --green-glow: rgba(184,245,90,0.25);
+    --orange: #ff7b3a;
+    --blue: #5ab4f5;
+    --gold: #f5c842;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-decoration: none;
+  }
+
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 22px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+  .btn-primary {
+    background: var(--green);
+    border: none;
+    color: #0a0a0a;
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: #cdfb72; transform: translateY(-1px); box-shadow: 0 8px 24px var(--green-glow); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(184,245,90,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid rgba(184,245,90,0.3);
+    color: var(--green);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .ai-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    animation: fadeUp 0.6s 0.1s ease both;
+    position: relative;
+  }
+
+  h1 span { color: var(--green); }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 560px;
+    margin: 24px auto 40px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-xl {
+    padding: 16px 36px;
+    font-size: 16px;
+    border-radius: 100px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 80px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--green);
+    line-height: 1;
+  }
+  .hero-stat-lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ── RATING STRIP ── */
+  .rating-strip {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+
+  .rating-item { display: flex; align-items: center; gap: 12px; }
+  .rating-stars { display: flex; gap: 3px; }
+  .star { color: var(--gold); font-size: 18px; }
+  .rating-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .rating-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .rating-divider {
+    width: 1px; height: 48px;
+    background: var(--border);
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 24px;
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+
+  .section-body {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ── FEATURES GRID ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 64px;
+  }
+
+  .feature-card {
+    background: var(--bg);
+    padding: 36px;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .feature-card:hover { background: var(--bg3); }
+
+  .feature-icon {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .feature-icon.green { background: var(--green-dim); }
+  .feature-icon.orange { background: rgba(255,123,58,0.12); }
+  .feature-icon.blue { background: rgba(90,180,245,0.12); }
+  .feature-icon.gold { background: rgba(245,200,66,0.12); }
+
+  .feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--green-dim);
+    border: 1px solid rgba(184,245,90,0.3);
+    color: var(--green);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    position: absolute;
+    top: 20px; right: 20px;
+  }
+
+  /* ── BENEFITS ── */
+  .benefits-section { background: var(--bg2); }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 64px;
+    align-items: start;
+  }
+
+  .benefit-list { display: flex; flex-direction: column; gap: 24px; }
+
+  .benefit-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .benefit-item:hover { border-color: rgba(184,245,90,0.3); transform: translateX(4px); }
+
+  .benefit-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--green);
+    line-height: 1;
+    min-width: 36px;
+    opacity: 0.4;
+  }
+
+  .benefit-content h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .benefit-content p { font-size: 14px; color: var(--muted); }
+
+  .benefits-visual {
+    position: sticky;
+    top: 100px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .mock-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-title { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+
+  .mock-body { padding: 20px; }
+
+  .mock-stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .mock-stat {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+  }
+  .mock-stat-n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--green);
+    line-height: 1;
+  }
+  .mock-stat-l { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+  .mock-bar-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .mock-bar-item { display: flex; flex-direction: column; gap: 5px; }
+  .mock-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .mock-bar-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .mock-bar-fill { height: 100%; border-radius: 3px; }
+
+  .mock-water-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .mock-glass { width: 28px; height: 36px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); }
+  .mock-glass.filled { background: rgba(90,180,245,0.3); border-color: rgba(90,180,245,0.4); }
+
+  /* ── PRICING/CTA ── */
+  .cta-section {
+    text-align: center;
+    padding: 120px 24px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(184,245,90,0.06) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .cta-free-badge {
+    display: inline-block;
+    background: var(--green);
+    color: #0a0a0a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 100px);
+    line-height: 0.9;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+  }
+
+  .cta-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 48px;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--green);
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(12px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    position: relative;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--text); }
+
+  .modal-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  .modal-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .modal-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg3);
+    border-radius: 100px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+
+  .modal-tab {
+    flex: 1;
+    padding: 9px;
+    border-radius: 100px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .modal-tab.active { background: var(--bg2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+  .modal-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .modal-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .modal-feature::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .modal-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .modal-divider::before, .modal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .btn-full {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: var(--radius);
+    text-align: center;
+  }
+
+  .groundwork-link {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .groundwork-link a {
+    color: var(--green);
+    text-decoration: none;
+  }
+  .groundwork-link a:hover { text-decoration: underline; }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .hero-stats { gap: 24px; }
+    .rating-strip { gap: 24px; padding: 24px 20px; }
+    .rating-divider { display: none; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .benefits-visual { display: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">GROUNDWORK</a>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="openModal('login')">Sign in</button>
+    <button class="btn-primary" onclick="openModal('signup')">Get started free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span class="ai-dot"></span> AI-Powered Training Platform</div>
+  <h1>TRAIN<br><span>SMARTER.</span><br>NOT HARDER.</h1>
+  <p class="hero-sub">Groundwork is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
+  <div class="hero-actions">
+    <button class="btn-primary btn-xl" onclick="openModal('signup')">Start for free</button>
+    <button class="btn-ghost btn-xl" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See what's inside ↓</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">4.9</div>
+      <div class="hero-stat-lbl">Rating</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">100%</div>
+      <div class="hero-stat-lbl">Free</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">AI</div>
+      <div class="hero-stat-lbl">Powered</div>
+    </div>
+  </div>
+</div>
+
+<!-- RATING STRIP -->
+<div class="rating-strip reveal">
+  <div class="rating-item">
+    <div>
+      <div class="rating-stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+      <div class="rating-label" style="margin-top:4px">Overall experience</div>
+    </div>
+    <div class="rating-score">4.9</div>
+  </div>
+  <div class="rating-divider"></div>
+  <div class="rating-item">
+    <div>
+      <div class="rating-stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+      <div class="rating-label" style="margin-top:4px">AI coach quality</div>
+    </div>
+    <div class="rating-score">5.0</div>
+  </div>
+  <div class="rating-divider"></div>
+  <div class="rating-item">
+    <div>
+      <div class="rating-stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+      <div class="rating-label" style="margin-top:4px">Ease of use</div>
+    </div>
+    <div class="rating-score">4.8</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Everything you need</div>
+      <h2 class="section-title">ONE PLATFORM.<br>EVERY TOOL.</h2>
+      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Groundwork gives you everything a personal trainer would, without the cost.</p>
+    </div>
+    <div class="features-grid reveal">
+
+      <div class="feature-card">
+        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
+        <div class="feature-icon green">🤖</div>
+        <div class="feature-title">AI Personal Coach</div>
+        <div class="feature-desc">Chat with your built-in AI trainer anytime. Get personalized workout advice, form tips, and motivation tailored to your goals and fitness level.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
+        <div class="feature-icon green">🎯</div>
+        <div class="feature-title">Smart Onboarding</div>
+        <div class="feature-desc">Tell the AI your goals, body stats, and experience level. It instantly generates your personalized nutrition targets and daily calorie goals.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon orange">🏋️</div>
+        <div class="feature-title">Workout Programs</div>
+        <div class="feature-desc">Build custom programs with exercises, sets, reps, and rest times. Mark sets complete as you go and earn XP for every workout finished.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon orange">📅</div>
+        <div class="feature-title">Weekly Planner</div>
+        <div class="feature-desc">Schedule your training week with a drag-free calendar. See your daily plan at a glance and stay consistent with automatic streak tracking.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
+        <div class="feature-icon blue">🥗</div>
+        <div class="feature-title">Nutrition Tracking</div>
+        <div class="feature-desc">Log meals and track calories, protein, carbs, and fat with AI-set targets. Quick-add common foods or enter custom macros in seconds.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">💧</div>
+        <div class="feature-title">Hydration Monitor</div>
+        <div class="feature-desc">Track your daily water intake with a visual glass counter. Your hydration goal is set automatically based on your body weight and activity level.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon gold">⚡</div>
+        <div class="feature-title">XP & Levels</div>
+        <div class="feature-desc">Earn experience points for every workout, completed day, and milestone reached. Level up as you get stronger and watch your progress grow.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon gold">🏆</div>
+        <div class="feature-title">Achievements & Milestones</div>
+        <div class="feature-desc">Unlock milestone achievements as you hit streaks, XP thresholds, and training goals. Track your entire fitness journey in the progress dashboard.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">☁️</div>
+        <div class="feature-title">Cloud Sync</div>
+        <div class="feature-desc">Your data syncs across all your devices automatically. Sign in on any browser and pick up exactly where you left off — nothing is ever lost.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits-section">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Why Groundwork</div>
+      <h2 class="section-title">BUILT FOR<br>REAL RESULTS.</h2>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-list reveal">
+        <div class="benefit-item">
+          <div class="benefit-num">01</div>
+          <div class="benefit-content">
+            <h3>Completely free, forever</h3>
+            <p>No subscriptions, no paywalls, no hidden fees. Every feature — including AI coaching — is free for everyone.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">02</div>
+          <div class="benefit-content">
+            <h3>Personalized from day one</h3>
+            <p>The AI onboarding sets your nutrition targets, calorie goals, and hydration levels based on your unique profile.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">03</div>
+          <div class="benefit-content">
+            <h3>Keeps you accountable</h3>
+            <p>Streaks, XP, levels, and achievements are designed to build habits — not just track workouts.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">04</div>
+          <div class="benefit-content">
+            <h3>Works anywhere</h3>
+            <p>Cloud-synced and mobile-friendly. Your training plan is always available, even on the go.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">05</div>
+          <div class="benefit-content">
+            <h3>AI coach always available</h3>
+            <p>Ask your AI trainer anything — injury questions, form advice, plateau-breaking tips — 24/7, no waiting.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="benefits-visual reveal">
+        <div class="mock-header">
+          <div class="mock-dot" style="background:#ff5f57"></div>
+          <div class="mock-dot" style="background:#febc2e"></div>
+          <div class="mock-dot" style="background:#28c840"></div>
+          <div class="mock-title">groundwork — dashboard</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-stat-row">
+            <div class="mock-stat"><div class="mock-stat-n">12</div><div class="mock-stat-l">Level</div></div>
+            <div class="mock-stat"><div class="mock-stat-n" style="color:var(--orange)">2,840</div><div class="mock-stat-l">Total XP</div></div>
+            <div class="mock-stat"><div class="mock-stat-n" style="color:var(--blue)">🔥 14</div><div class="mock-stat-l">Streak</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Nutrition today</div>
+          <div class="mock-bar-row">
+            <div class="mock-bar-item">
+              <div class="mock-bar-label"><span>Calories</span><span style="color:var(--text)">1,840 / 2,200</span></div>
+              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:83%;background:var(--green)"></div></div>
+            </div>
+            <div class="mock-bar-item">
+              <div class="mock-bar-label"><span>Protein</span><span style="color:var(--text)">124 / 150g</span></div>
+              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:82%;background:var(--orange)"></div></div>
+            </div>
+            <div class="mock-bar-item">
+              <div class="mock-bar-label"><span>Carbs</span><span style="color:var(--text)">198 / 250g</span></div>
+              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:79%;background:var(--blue)"></div></div>
+            </div>
+            <div class="mock-bar-item">
+              <div class="mock-bar-label"><span>Fat</span><span style="color:var(--text)">52 / 70g</span></div>
+              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:var(--gold)"></div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:16px 0 10px;text-transform:uppercase;letter-spacing:1px;">Hydration — 6 / 8</div>
+          <div class="mock-water-row">
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass filled"></div>
+            <div class="mock-glass"></div>
+            <div class="mock-glass"></div>
+          </div>
+          <div style="margin-top:16px;background:var(--green-dim);border:1px solid rgba(184,245,90,0.2);border-radius:var(--radius-sm);padding:12px;display:flex;align-items:center;gap:10px;">
+            <div style="font-size:20px">🤖</div>
+            <div>
+              <div style="font-size:12px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:2px;">AI COACH</div>
+              <div style="font-size:12px;color:var(--muted)">"Great streak! Add 5kg to your squat today."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="reveal" style="position:relative;z-index:1">
+    <div class="cta-free-badge">FREE FOREVER</div>
+    <h2 class="cta-title">READY TO<br><span style="color:var(--green)">START?</span></h2>
+    <p class="cta-sub">Join Groundwork and get your personalized AI training plan in under 2 minutes.</p>
+    <button class="btn-primary btn-xl" onclick="openModal('signup')">Create free account</button>
+    <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card required · Cancel anytime</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GROUNDWORK</div>
+  <div>Built for athletes. Powered by AI.</div>
+  <div style="display:flex;gap:20px">
+    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="openModal('login')">Sign in</button>
+    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="openModal('signup')">Sign up free</button>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-logo">GROUNDWORK</div>
+    <div class="modal-subtitle">Your AI-powered fitness platform</div>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
+      <button class="modal-tab" id="tab-login" onclick="switchTab('login')">Sign in</button>
+    </div>
+
+    <div class="modal-features" id="modal-features">
+      <div class="modal-feature">AI personal coach included</div>
+      <div class="modal-feature">Smart nutrition & hydration tracking</div>
+      <div class="modal-feature">Workout programs & weekly planner</div>
+      <div class="modal-feature">XP, levels & achievement system</div>
+      <div class="modal-feature">Cloud sync across all devices</div>
+      <div class="modal-feature">100% free, forever</div>
+    </div>
+
+    <div class="modal-divider">or</div>
+
+    <button class="btn-primary btn-full" id="modal-cta" onclick="goToApp()">
+      Create free account →
+    </button>
+    <div class="groundwork-link">
+      Already have an account? <a href="#" onclick="switchTab('login');return false;">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal
+  function openModal(tab) {
+    document.getElementById('modal-overlay').classList.add('open');
+    switchTab(tab || 'signup');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    const features = document.getElementById('modal-features');
+    const cta = document.getElementById('modal-cta');
+    const link = document.querySelector('.groundwork-link');
+    if (tab === 'signup') {
+      features.style.display = 'flex';
+      cta.textContent = 'Create free account →';
+      link.innerHTML = 'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Sign in</a>';
+    } else {
+      features.style.display = 'none';
+      cta.textContent = 'Sign in to Groundwork →';
+      link.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchTab(\'signup\');return false;">Sign up free</a>';
+    }
+  }
+
+  function goToApp() {
+    window.location.href = 'groundwork.html';
+  }
+
+  // Show modal after 3s if not dismissed
+  let modalShown = false;
+  setTimeout(() => {
+    if (!modalShown) { openModal('signup'); modalShown = true; }
+  }, 3000);
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) { modalShown = true; closeModal(); }
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Keyboard
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
