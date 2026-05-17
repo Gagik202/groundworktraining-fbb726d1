@@ -4354,15 +4354,24 @@ async function _syncDown() {
 function _initAuth() {
   const sb = _getSupaClient();
   if (sb) {
-    sb.auth.onAuthStateChange((ev, session) => {
+    sb.auth.onAuthStateChange(async (ev, session) => {
       _authUser = session?.user || null;
       _updateAuthUI();
-      if (ev==='SIGNED_IN') { authHide(); _syncDown(); }
+      if (ev==='SIGNED_IN') {
+        authHide();
+        const had = await _syncDown();
+        // First-time signup → no nutrition targets in cloud → run onboarding
+        if (!state.nutritionTargets) setTimeout(()=>openNutritionOnboarding(), 400);
+        else if (!had) _syncUp();
+      }
     });
-    sb.auth.getSession().then(({data:{session}}) => {
+    sb.auth.getSession().then(async ({data:{session}}) => {
       _authUser = session?.user || null;
       _updateAuthUI();
-      if (!_authUser && !localStorage.getItem('gw-seen-auth')) authPanel('login');
+      if (_authUser) {
+        await _syncDown();
+        if (!state.nutritionTargets) setTimeout(()=>openNutritionOnboarding(), 400);
+      } else if (!localStorage.getItem('gw-seen-auth')) authPanel('login');
     });
   } else {
     _updateAuthUI();
