@@ -3234,9 +3234,9 @@ function renderCalendarDetails() {
     return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
       <div style="width:3px;height:36px;background:${col};border-radius:2px;flex-shrink:0"></div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${ev.title}</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim)">${ev.start} – ${ev.end} · ${ev.type}${ev.recurrence&&ev.recurrence!=='none'?' · recurring':''}</div>
-        ${ev.notes?`<div style="font-size:11px;color:var(--dim);margin-top:2px">${ev.notes}</div>`:''}
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(ev.title)}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim)">${ev.start} – ${ev.end} · ${esc(ev.type)}${ev.recurrence&&ev.recurrence!=='none'?' · recurring':''}</div>
+        ${ev.notes?`<div style="font-size:11px;color:var(--dim);margin-top:2px">${esc(ev.notes)}</div>`:''}
       </div>
       ${isDirect?`<button class="btn btn-sm btn-danger" onclick="deleteEventDirect('${selectedCalendarDate}',${i})">✕</button>`:''}
     </div>`;
