@@ -4264,15 +4264,16 @@ async function authRegister() {
 }
 
 async function authSignOut() {
-  try {
-    const sb = _getSupaClient();
-    if (sb) await sb.auth.signOut();
-  } catch(e) {}
-  _authUser = null;
-  _supabase = null;
+  // Always nuke all Supabase session keys first so session can't be restored on reload
   try {
     Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k));
   } catch(e) {}
+  // Then try to tell Supabase server the session is over
+  try {
+    const sb = _getSupaClient();
+    if (sb) await sb.auth.signOut({ scope: 'local' });
+  } catch(e) {}
+  _authUser = null;
   uaClose();
   _updateAuthUI();
   showToast('Signed out.','t-info','');
@@ -4406,16 +4407,16 @@ saveState = function() {
 // ═══════════════════════════════════════════════
 async function removeAllUserData() {
   if (!confirm('Remove ALL of your Groundwork data (cloud + this device)? This cannot be undone.')) return;
+  // Clear session keys first so they can't be restored
+  try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
   const sb = _getSupaClient();
   if (sb && _authUser) {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
-    try { await sb.auth.signOut(); } catch(e) {}
+    try { await sb.auth.signOut({ scope: 'local' }); } catch(e) {}
   }
   _authUser = null;
-  _supabase = null;
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
   try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
-  try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
   location.reload();
 }
 
