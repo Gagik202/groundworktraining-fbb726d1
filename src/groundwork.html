@@ -4417,16 +4417,20 @@ saveState = function() {
 // ═══════════════════════════════════════════════
 async function removeAllUserData() {
   if (!confirm('Remove ALL of your Groundwork data (cloud + this device)? This cannot be undone.')) return;
-  // Clear session keys first so they can't be restored
+  // Clear session keys first so they can't be restored on reload
   try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
   const sb = _getSupaClient();
   if (sb && _authUser) {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
-    try { await Promise.race([sb.auth.signOut({ scope: 'local' }), new Promise((_, rej) => setTimeout(() => rej(), 2000))]); } catch(e) {}
+    // Always sign out within 2s — don't wait for Supabase if it's slow
+    try { await Promise.race([
+      sb.auth.signOut({ scope: 'local' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
+    ]); } catch(e) {}
   }
   _authUser = null;
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-  try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
   location.reload();
 }
 
