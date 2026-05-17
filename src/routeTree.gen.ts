@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiAiWorkoutRouteImport } from './routes/api/ai-workout'
+import { Route as ApiAiNutritionRouteImport } from './routes/api/ai-nutrition'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiAiWorkoutRoute = ApiAiWorkoutRouteImport.update({
   path: '/api/ai-workout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiNutritionRoute = ApiAiNutritionRouteImport.update({
+  id: '/api/ai-nutrition',
+  path: '/api/ai-nutrition',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/ai-workout'
+  fullPaths: '/' | '/api/ai-nutrition' | '/api/ai-workout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/ai-workout'
-  id: '__root__' | '/' | '/api/ai-workout'
+  to: '/' | '/api/ai-nutrition' | '/api/ai-workout'
+  id: '__root__' | '/' | '/api/ai-nutrition' | '/api/ai-workout'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiAiNutritionRoute: typeof ApiAiNutritionRoute
   ApiAiWorkoutRoute: typeof ApiAiWorkoutRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiWorkoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai-nutrition': {
+      id: '/api/ai-nutrition'
+      path: '/api/ai-nutrition'
+      fullPath: '/api/ai-nutrition'
+      preLoaderRoute: typeof ApiAiNutritionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiAiNutritionRoute: ApiAiNutritionRoute,
   ApiAiWorkoutRoute: ApiAiWorkoutRoute,
 }
 export const routeTree = rootRouteImport
