@@ -2969,12 +2969,12 @@ function renderExercises(idx) {
     grid.innerHTML += `
       <div class="ex-card ${isDone?'done':''}" id="excard-${i}">
         <div class="ex-top">
-          <div class="ex-name">${ex.name}</div>
+          <div class="ex-name">${esc(ex.name)}</div>
           <div class="ex-badge">${ex.sets}×${ex.reps}</div>
         </div>
-        <div class="ex-form">${ex.form}</div>
+        <div class="ex-form">${esc(ex.form)}</div>
         <div class="ex-chips">
-          <span class="ex-chip">${ex.muscle}</span>
+          <span class="ex-chip">${esc(ex.muscle)}</span>
           <span class="ex-chip">+${ex.xp*(ex.sets||3)} XP</span>
         </div>
         <button class="ex-done-btn ${isDone?'checked':''}" onclick="toggleExercise(${idx},${i},event)">
