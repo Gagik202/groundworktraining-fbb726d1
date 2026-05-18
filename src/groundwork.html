@@ -4536,11 +4536,13 @@ function openNutritionOnboarding() {
       if (!r.ok) throw new Error('AI error '+r.status);
       const j = await r.json();
       state.nutritionTargets = j.targets;
-      state.aiProfile = {...(state.aiProfile||{}), height:profile.height, weight:profile.weight, age:profile.age, sex:profile.sex};
+      state.aiProfile = {...(state.aiProfile||{}), height:profile.height, weight:profile.weight, age:profile.age, sex:profile.sex, activity:profile.activity, goal:profile.goal};
       saveState();
       _syncUp();
       wrap.remove();
-      showToast(`Targets set: ${j.targets.calories} kcal · ${j.targets.protein}P / ${j.targets.carbs}C / ${j.targets.fats}F · ${j.targets.water} glasses`,'t-success','');
+      const wk = j.targets.timeToResultsWeeks || 6;
+      const note = j.targets.timeToResultsNote || `Expect results in ~${wk} weeks.`;
+      showResultsModal(j.targets, wk, note);
     } catch(e) {
       btn.disabled=false; btn.textContent='Calculate my targets';
       errEl.textContent = esc(e.message || 'Failed to calculate.'); errEl.style.display='block';
