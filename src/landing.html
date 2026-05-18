@@ -998,51 +998,17 @@
 </div>
 
 <script>
-  // Modal
-  function openModal(tab) {
-    document.getElementById('modal-overlay').classList.add('open');
-    switchTab(tab || 'signup');
+  // Direct nav to real app auth (no fake landing modal)
+  function goAuth(tab) {
+    window.location.href = '/app?auth=' + (tab === 'login' ? 'login' : 'signup');
   }
 
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
-
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  }
-
-  function switchTab(tab) {
-    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-    const features = document.getElementById('modal-features');
-    const cta = document.getElementById('modal-cta');
-    const link = document.querySelector('.groundwork-link');
-    if (tab === 'signup') {
-      features.style.display = 'flex';
-      cta.textContent = 'Create free account →';
-      link.innerHTML = 'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Sign in</a>';
-    } else {
-      features.style.display = 'none';
-      cta.textContent = 'Sign in to Ironpath →';
-      link.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchTab(\'signup\');return false;">Sign up free</a>';
-    }
-  }
-
-  function goToApp() {
-  const activeTab = document.getElementById('tab-signup').classList.contains('active') ? 'signup' : 'login';
-  window.location.href = '/app?auth=' + activeTab; // Use ?mode= to pass the state
-}
-
-  // Show modal after 3s if not dismissed
-  let modalShown = false;
-  setTimeout(() => {
-    if (!modalShown) { openModal('signup'); modalShown = true; }
-  }, 3000);
-
-  document.getElementById('modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) { modalShown = true; closeModal(); }
-  });
+  // Legacy modal kept hidden — old buttons all call goAuth() now
+  function openModal(tab) { goAuth(tab); }
+  function closeModal() { const el = document.getElementById('modal-overlay'); if (el) el.classList.remove('open'); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+  function switchTab(tab) { goAuth(tab); }
+  function goToApp() { goAuth('signup'); }
 
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
