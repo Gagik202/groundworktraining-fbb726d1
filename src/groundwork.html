@@ -58,6 +58,49 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ── IRONPATH MOTION SYSTEM (matches landing page) ── */
+@keyframes ip-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes ip-float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ip-pulse-glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,.45), 0 8px 28px -8px rgba(201,168,76,.35); }
+  50%     { box-shadow: 0 0 0 10px rgba(201,168,76,0),  0 10px 36px -6px rgba(240,215,140,.55); }
+}
+@keyframes ip-fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ip-scale-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+
+.gold-shimmer {
+  background: linear-gradient(110deg,#c9a84c 0%,#f0d78c 25%,#fff5cc 50%,#f0d78c 75%,#c9a84c 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ip-shimmer 6s linear infinite;
+}
+/* Body grain — same noise overlay as landing */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+}
+/* Subtle gold ambient glow */
+body::after {
+  content: ''; position: fixed; top: -200px; left: 50%; width: 700px; height: 700px;
+  transform: translateX(-50%); pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(201,168,76,.10) 0%, transparent 60%);
+  filter: blur(40px);
+}
+/* Primary CTAs pulse with gold */
+.btn-primary, button.primary, .auth-submit, .ai-go, [data-ai-primary] {
+  animation: ip-pulse-glow 2.8s ease-in-out infinite;
+}
+/* Modals fade-up */
+.modal-overlay.open > *,
+#auth-overlay:not(.hidden) .auth-card { animation: ip-scale-in .35s cubic-bezier(.2,.7,.2,1) both; }
+/* Nav logo gets the gold shimmer */
+.logo-name { background: linear-gradient(110deg,#c9a84c 0%,#f0d78c 50%,#c9a84c 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: ip-shimmer 8s linear infinite; }
+.auth-logo { background: linear-gradient(110deg,#c9a84c 0%,#f0d78c 50%,#c9a84c 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: ip-shimmer 6s linear infinite; }
+/* Reveal-on-scroll util */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
 /* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -4536,16 +4579,49 @@ function openNutritionOnboarding() {
       if (!r.ok) throw new Error('AI error '+r.status);
       const j = await r.json();
       state.nutritionTargets = j.targets;
-      state.aiProfile = {...(state.aiProfile||{}), height:profile.height, weight:profile.weight, age:profile.age, sex:profile.sex};
+      state.aiProfile = {...(state.aiProfile||{}), height:profile.height, weight:profile.weight, age:profile.age, sex:profile.sex, activity:profile.activity, goal:profile.goal};
       saveState();
       _syncUp();
       wrap.remove();
-      showToast(`Targets set: ${j.targets.calories} kcal · ${j.targets.protein}P / ${j.targets.carbs}C / ${j.targets.fats}F · ${j.targets.water} glasses`,'t-success','');
+      const wk = j.targets.timeToResultsWeeks || 6;
+      const note = j.targets.timeToResultsNote || `Expect results in ~${wk} weeks.`;
+      showResultsModal(j.targets, wk, note);
     } catch(e) {
       btn.disabled=false; btn.textContent='Calculate my targets';
       errEl.textContent = esc(e.message || 'Failed to calculate.'); errEl.style.display='block';
     }
   };
+}
+
+function showResultsModal(t, weeks, note) {
+  const w = document.createElement('div');
+  w.className = 'modal-overlay open';
+  w.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(6px);';
+  const targetDate = new Date(Date.now() + weeks*7*24*3600*1000)
+    .toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+  w.innerHTML = `
+    <div class="ip-results-card" style="background:linear-gradient(160deg,var(--surface) 0%,var(--lift) 100%);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:28px;max-width:440px;width:92%;font-family:var(--sans);box-shadow:0 24px 80px -20px rgba(201,168,76,.35);position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:-1px;border-radius:12px;padding:1px;background:linear-gradient(135deg,rgba(201,168,76,.6),transparent 40%,rgba(240,215,140,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;"></div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.14em;margin-bottom:6px;">YOUR PLAN — POWERED BY AI</div>
+      <div class="gold-shimmer" style="font-size:24px;font-weight:800;letter-spacing:-.01em;margin-bottom:18px;">Targets locked in.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;">
+        ${[['Calories',t.calories+' kcal'],['Protein',t.protein+' g'],['Carbs',t.carbs+' g'],['Fats',t.fats+' g'],['Water',t.water+' glasses'],['Glasses (250ml)','×'+t.water]].map(([k,v])=>`
+          <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:8px;padding:10px 12px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;">${esc(k.toUpperCase())}</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-top:2px;">${esc(v)}</div>
+          </div>`).join('')}
+      </div>
+      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:14px;margin-bottom:16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:.14em;margin-bottom:4px;">ESTIMATED TIME TO RESULTS</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent-dim);letter-spacing:-.01em;">~${weeks} weeks</div>
+        <div style="font-size:12px;color:var(--mid);margin-top:4px;line-height:1.5;">${esc(note)}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px;">Target check-in date: <span style="color:var(--text);">${esc(targetDate)}</span></div>
+      </div>
+      <button id="ip-results-close" style="width:100%;padding:12px;background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;cursor:pointer;font-weight:800;font-size:13px;letter-spacing:.04em;font-family:var(--sans);">LET'S GO →</button>
+    </div>`;
+  document.body.appendChild(w);
+  document.getElementById('ip-results-close').onclick = () => w.remove();
+  w.addEventListener('click', e => { if (e.target === w) w.remove(); });
 }
 
 _initAuth();
