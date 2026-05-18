@@ -4401,13 +4401,16 @@ function _initAuth() {
     sb.auth.getSession().then(async ({data:{session}}) => {
       _authUser = session?.user || null;
       _updateAuthUI();
+      const _ap = new URLSearchParams(window.location.search).get('auth');
       if (_authUser) {
         await _syncDown();
         const _hasRealTargets = state.nutritionTargets && !state.nutritionTargets.skipped;
         if (!_hasRealTargets) setTimeout(()=>openNutritionOnboarding(), 400);
-      } else if (!localStorage.getItem('gw-seen-auth')) {
-        const _ap = new URLSearchParams(window.location.search).get('auth');
+      } else if (_ap === 'signup' || _ap === 'login') {
+        // Always honor explicit ?auth= from landing page
         authPanel(_ap === 'signup' ? 'register' : 'login');
+      } else if (!localStorage.getItem('gw-seen-auth')) {
+        authPanel('login');
       }
     });
   } else {
