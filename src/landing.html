@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groundwork — Train Smarter</title>
+<title>Ironpath — Forge Your Strength</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -674,10 +674,10 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">GROUNDWORK</a>
+  <a class="nav-logo" href="#">IRONPATH</a>
   <div class="nav-actions">
-    <button class="btn-ghost" onclick="openModal('login')">Sign in</button>
-    <button class="btn-primary" onclick="openModal('signup')">Get started free</button>
+    <button class="btn-ghost" onclick="goAuth('login')">Sign in</button>
+    <button class="btn-primary" onclick="goAuth('signup')">Get started free</button>
   </div>
 </nav>
 
@@ -686,9 +686,9 @@
   <div class="hero-glow"></div>
   <div class="hero-badge"><span class="ai-dot"></span> AI-Powered Training Platform</div>
   <h1>TRAIN<br><span>SMARTER.</span><br>NOT HARDER.</h1>
-  <p class="hero-sub">Groundwork is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
+  <p class="hero-sub">Ironpath is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
   <div class="hero-actions">
-    <button class="btn-primary btn-xl" onclick="openModal('signup')">Start for free</button>
+    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Start for free</button>
     <button class="btn-ghost btn-xl" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See what's inside ↓</button>
   </div>
   <div class="hero-stats">
@@ -746,7 +746,7 @@
     <div class="reveal">
       <div class="section-tag">Everything you need</div>
       <h2 class="section-title">ONE PLATFORM.<br>EVERY TOOL.</h2>
-      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Groundwork gives you everything a personal trainer would, without the cost.</p>
+      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Ironpath gives you everything a personal trainer would, without the cost.</p>
     </div>
     <div class="features-grid reveal">
 
@@ -815,7 +815,7 @@
 <section class="benefits-section">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">Why Groundwork</div>
+      <div class="section-tag">Why Ironpath</div>
       <h2 class="section-title">BUILT FOR<br>REAL RESULTS.</h2>
     </div>
     <div class="benefits-grid">
@@ -919,19 +919,19 @@
   <div class="reveal" style="position:relative;z-index:1">
     <div class="cta-free-badge">FREE FOREVER</div>
     <h2 class="cta-title">READY TO<br><span style="color:var(--green)">START?</span></h2>
-    <p class="cta-sub">Join Groundwork and get your personalized AI training plan in under 2 minutes.</p>
-    <button class="btn-primary btn-xl" onclick="openModal('signup')">Create free account</button>
+    <p class="cta-sub">Join Ironpath and get your personalized AI training plan in under 2 minutes.</p>
+    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Create free account</button>
     <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card required · Cancel anytime</div>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">GROUNDWORK</div>
+  <div class="footer-logo">IRONPATH</div>
   <div>Built for athletes. Powered by AI.</div>
   <div style="display:flex;gap:20px">
-    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="openModal('login')">Sign in</button>
-    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="openModal('signup')">Sign up free</button>
+    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="goAuth('login')">Sign in</button>
+    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="goAuth('signup')">Sign up free</button>
   </div>
 </footer>
 
@@ -939,7 +939,7 @@
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-logo">GROUNDWORK</div>
+    <div class="modal-logo">IRONPATH</div>
     <div class="modal-subtitle">Your AI-powered fitness platform</div>
 
     <div class="modal-tabs">
@@ -994,14 +994,14 @@
       link.innerHTML = 'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Sign in</a>';
     } else {
       features.style.display = 'none';
-      cta.textContent = 'Sign in to Groundwork →';
+      cta.textContent = 'Sign in to Ironpath →';
       link.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchTab(\'signup\');return false;">Sign up free</a>';
     }
   }
 
   function goToApp() {
   const activeTab = document.getElementById('tab-signup').classList.contains('active') ? 'signup' : 'login';
-  window.location.href = 'groundwork.html?mode=' + activeTab; // Use ?mode= to pass the state
+  window.location.href = '/app?auth=' + activeTab; // Use ?mode= to pass the state
 }
 
   // Show modal after 3s if not dismissed
