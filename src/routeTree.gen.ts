@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiAiWorkoutRouteImport } from './routes/api/ai-workout'
 import { Route as ApiAiNutritionRouteImport } from './routes/api/ai-nutrition'
 
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +37,47 @@ const ApiAiNutritionRoute = ApiAiNutritionRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/api/ai-nutrition': typeof ApiAiNutritionRoute
   '/api/ai-workout': typeof ApiAiWorkoutRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/ai-nutrition' | '/api/ai-workout'
+  fullPaths: '/' | '/app' | '/api/ai-nutrition' | '/api/ai-workout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/ai-nutrition' | '/api/ai-workout'
-  id: '__root__' | '/' | '/api/ai-nutrition' | '/api/ai-workout'
+  to: '/' | '/app' | '/api/ai-nutrition' | '/api/ai-workout'
+  id: '__root__' | '/' | '/app' | '/api/ai-nutrition' | '/api/ai-workout'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   ApiAiNutritionRoute: typeof ApiAiNutritionRoute
   ApiAiWorkoutRoute: typeof ApiAiWorkoutRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,9 +104,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   ApiAiNutritionRoute: ApiAiNutritionRoute,
   ApiAiWorkoutRoute: ApiAiWorkoutRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
