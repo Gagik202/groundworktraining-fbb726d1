@@ -4433,21 +4433,32 @@ saveState = function() {
 // ═══════════════════════════════════════════════
 async function removeAllUserData() {
   if (!confirm('Remove ALL of your Ironpath data (cloud + this device)? This cannot be undone.')) return;
-  // Clear session keys first so they can't be restored on reload
-  try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-  try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
   const sb = _getSupaClient();
+  // 1. Delete cloud row first (while we still have an auth token)
   if (sb && _authUser) {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
-    // Always sign out within 2s — don't wait for Supabase if it's slow
     try { await Promise.race([
-      sb.auth.signOut({ scope: 'local' }),
+      sb.auth.signOut({ scope: 'global' }),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
     ]); } catch(e) {}
   }
+  // 2. Wipe ALL device storage (localStorage + sessionStorage + IndexedDB + caches)
+  try { Object.keys(localStorage).forEach(k => localStorage.removeItem(k)); } catch(e) {}
+  try { Object.keys(sessionStorage).forEach(k => sessionStorage.removeItem(k)); } catch(e) {}
+  try {
+    if (window.indexedDB && indexedDB.databases) {
+      const dbs = await indexedDB.databases();
+      dbs.forEach(d => d.name && indexedDB.deleteDatabase(d.name));
+    }
+  } catch(e) {}
+  try {
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  } catch(e) {}
   _authUser = null;
-  location.reload();
+  location.replace('/');
 }
 
 // ═══════════════════════════════════════════════
