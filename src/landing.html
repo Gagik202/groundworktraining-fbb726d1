@@ -3,28 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groundwork — Train Smarter</title>
+<title>Ironpath — Forge Your Strength</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0c0c;
-    --bg2: #141414;
-    --bg3: #1c1c1c;
-    --border: rgba(255,255,255,0.06);
-    --text: #f0f0f0;
-    --muted: rgba(240,240,240,0.45);
-    --green: #5af78e;
-    --green-dim: rgba(90,247,142,0.1);
-    --green-glow: rgba(90,247,142,0.2);
-    --orange: #f5a623;
-    --blue: #6eb6ff;
-    --gold: #f5a623;
+    --bg: #0a0a0a;
+    --bg2: #131313;
+    --bg3: #1a1a1a;
+    --border: rgba(201,168,76,0.10);
+    --text: #f5f0e0;
+    --muted: rgba(245,240,224,0.45);
+    /* Gold becomes the "green" so legacy classes inherit the new palette */
+    --green: #c9a84c;
+    --green-dim: rgba(201,168,76,0.10);
+    --green-glow: rgba(240,215,140,0.28);
+    --orange: #f0d78c;
+    --blue: #f0d78c;
+    --gold: #c9a84c;
+    --gold-bright: #f0d78c;
     --radius: 8px;
     --radius-sm: 5px;
     --sans: 'Syne', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
   }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes float-y {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.45), 0 10px 40px -10px rgba(201,168,76,0.35); }
+    50%      { box-shadow: 0 0 0 14px rgba(201,168,76,0),    0 10px 50px -8px rgba(240,215,140,0.55); }
+  }
+  @keyframes drift {
+    0% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(30px,-20px) rotate(180deg); }
+    100% { transform: translate(0,0) rotate(360deg); }
+  }
+  .gold-shimmer {
+    background: linear-gradient(110deg, #c9a84c 0%, #f0d78c 25%, #fff5cc 50%, #f0d78c 75%, #c9a84c 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+  .btn-primary { animation: pulse-glow 2.6s ease-in-out infinite; }
+  .hero-badge { animation: float-y 4s ease-in-out infinite; }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -674,10 +704,10 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">GROUNDWORK</a>
+  <a class="nav-logo" href="#">IRONPATH</a>
   <div class="nav-actions">
-    <button class="btn-ghost" onclick="openModal('login')">Sign in</button>
-    <button class="btn-primary" onclick="openModal('signup')">Get started free</button>
+    <button class="btn-ghost" onclick="goAuth('login')">Sign in</button>
+    <button class="btn-primary" onclick="goAuth('signup')">Get started free</button>
   </div>
 </nav>
 
@@ -685,10 +715,10 @@
 <div class="hero">
   <div class="hero-glow"></div>
   <div class="hero-badge"><span class="ai-dot"></span> AI-Powered Training Platform</div>
-  <h1>TRAIN<br><span>SMARTER.</span><br>NOT HARDER.</h1>
-  <p class="hero-sub">Groundwork is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
+  <h1>FORGE<br><span class="gold-shimmer">YOUR PATH.</span><br>OF IRON.</h1>
+  <p class="hero-sub">Ironpath is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
   <div class="hero-actions">
-    <button class="btn-primary btn-xl" onclick="openModal('signup')">Start for free</button>
+    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Start for free</button>
     <button class="btn-ghost btn-xl" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See what's inside ↓</button>
   </div>
   <div class="hero-stats">
@@ -746,7 +776,7 @@
     <div class="reveal">
       <div class="section-tag">Everything you need</div>
       <h2 class="section-title">ONE PLATFORM.<br>EVERY TOOL.</h2>
-      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Groundwork gives you everything a personal trainer would, without the cost.</p>
+      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Ironpath gives you everything a personal trainer would, without the cost.</p>
     </div>
     <div class="features-grid reveal">
 
@@ -815,7 +845,7 @@
 <section class="benefits-section">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">Why Groundwork</div>
+      <div class="section-tag">Why Ironpath</div>
       <h2 class="section-title">BUILT FOR<br>REAL RESULTS.</h2>
     </div>
     <div class="benefits-grid">
@@ -918,20 +948,20 @@
   <div class="cta-glow"></div>
   <div class="reveal" style="position:relative;z-index:1">
     <div class="cta-free-badge">FREE FOREVER</div>
-    <h2 class="cta-title">READY TO<br><span style="color:var(--green)">START?</span></h2>
-    <p class="cta-sub">Join Groundwork and get your personalized AI training plan in under 2 minutes.</p>
-    <button class="btn-primary btn-xl" onclick="openModal('signup')">Create free account</button>
+    <h2 class="cta-title">READY TO<br><span class="gold-shimmer">FORGE?</span></h2>
+    <p class="cta-sub">Join Ironpath and get your personalized AI training plan in under 2 minutes.</p>
+    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Create free account</button>
     <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card required · Cancel anytime</div>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">GROUNDWORK</div>
+  <div class="footer-logo">IRONPATH</div>
   <div>Built for athletes. Powered by AI.</div>
   <div style="display:flex;gap:20px">
-    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="openModal('login')">Sign in</button>
-    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="openModal('signup')">Sign up free</button>
+    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="goAuth('login')">Sign in</button>
+    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="goAuth('signup')">Sign up free</button>
   </div>
 </footer>
 
@@ -939,7 +969,7 @@
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-logo">GROUNDWORK</div>
+    <div class="modal-logo">IRONPATH</div>
     <div class="modal-subtitle">Your AI-powered fitness platform</div>
 
     <div class="modal-tabs">
@@ -968,51 +998,17 @@
 </div>
 
 <script>
-  // Modal
-  function openModal(tab) {
-    document.getElementById('modal-overlay').classList.add('open');
-    switchTab(tab || 'signup');
+  // Direct nav to real app auth (no fake landing modal)
+  function goAuth(tab) {
+    window.location.href = '/app?auth=' + (tab === 'login' ? 'login' : 'signup');
   }
 
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
-
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  }
-
-  function switchTab(tab) {
-    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-    const features = document.getElementById('modal-features');
-    const cta = document.getElementById('modal-cta');
-    const link = document.querySelector('.groundwork-link');
-    if (tab === 'signup') {
-      features.style.display = 'flex';
-      cta.textContent = 'Create free account →';
-      link.innerHTML = 'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Sign in</a>';
-    } else {
-      features.style.display = 'none';
-      cta.textContent = 'Sign in to Groundwork →';
-      link.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchTab(\'signup\');return false;">Sign up free</a>';
-    }
-  }
-
-  function goToApp() {
-  const activeTab = document.getElementById('tab-signup').classList.contains('active') ? 'signup' : 'login';
-  window.location.href = 'groundwork.html?mode=' + activeTab; // Use ?mode= to pass the state
-}
-
-  // Show modal after 3s if not dismissed
-  let modalShown = false;
-  setTimeout(() => {
-    if (!modalShown) { openModal('signup'); modalShown = true; }
-  }, 3000);
-
-  document.getElementById('modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) { modalShown = true; closeModal(); }
-  });
+  // Legacy modal kept hidden — old buttons all call goAuth() now
+  function openModal(tab) { goAuth(tab); }
+  function closeModal() { const el = document.getElementById('modal-overlay'); if (el) el.classList.remove('open'); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+  function switchTab(tab) { goAuth(tab); }
+  function goToApp() { goAuth('signup'); }
 
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {

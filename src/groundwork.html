@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0c0c0c">
-<title>Groundwork — Train Smarter</title>
+<title>Ironpath — Forge Your Strength</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -25,9 +25,9 @@
   --dim:       #666;
   --text:      #f0f0f0;
   --white:     #ffffff;
-  --accent:    #3b82f6;
-  --accent-color: #3b82f6;
-  --accent-dim: #60a5fa;
+  --accent:    #c9a84c;
+  --accent-color: #c9a84c;
+  --accent-dim: #f0d78c;
   --green:     #5af78e;
   --amber:     #f5a623;
   --red:       #ff6b6b;
@@ -1796,7 +1796,7 @@ body {
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="hidden">
 <div class="auth-box">
-  <div class="auth-logo">GROUNDWORK</div>
+  <div class="auth-logo">IRONPATH</div>
   <div class="auth-sub-line">Your AI-powered fitness platform</div>
 
   <!-- TABS (login / register) -->
@@ -1864,7 +1864,7 @@ body {
         <rect x="8" y="8" width="5" height="5" rx="1" fill="#0c0c0c" opacity=".4"/>
       </svg>
     </div>
-    <span class="logo-name">Groundwork</span>
+    <span class="logo-name">Ironpath</span>
   </div>
   <div class="header-right">
     <div class="hstat" title="Level">
@@ -2456,7 +2456,7 @@ body {
 
 <script>
 // ════════════════════════════════════════════════════════════════
-//  GROUNDWORK — Backend & Logic
+//  IRONPATH — Backend & Logic
 //  Built on the Titan Protocol core, fully redesigned
 // ════════════════════════════════════════════════════════════════
 
@@ -2580,7 +2580,7 @@ const GOALS_DEFAULT = [
   {name:'10 Strict Pull-ups',desc:'Build back strength for dead-hang pull-ups',icon:'',current:0,target:10,unit:'reps',color:'#6eb6ff',achieved:false},
   {name:'30-Second Handstand',desc:'Freestanding handstand away from the wall',icon:'',current:0,target:30,unit:'sec',color:'#5af78e',achieved:false},
   {name:'Pistol Squat Both Legs',desc:'5 clean pistol squats per leg without support',icon:'',current:0,target:5,unit:'reps/leg',color:'#f5a623',achieved:false},
-  {name:'30-Day Streak',desc:'Complete Groundwork for 30 consecutive days',icon:'',current:0,target:30,unit:'days',color:'#ff6b6b',achieved:false},
+  {name:'30-Day Streak',desc:'Complete Ironpath for 30 consecutive days',icon:'',current:0,target:30,unit:'days',color:'#ff6b6b',achieved:false},
 ];
 
 const STORAGE_KEY = 'groundwork-state';
@@ -2598,7 +2598,7 @@ let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
   aiProfile:{
     height:'',weight:'',age:'',sex:'male',level:'intermediate',
     goal:'Strength',focus:'Full body',style:'Balanced',
-    equipment:'Bodyweight',programName:'Groundwork',
+    equipment:'Bodyweight',programName:'Ironpath',
     notes:'',injuries:'',
     selectedDays:[true,true,true,true,true,false,false],
   },
@@ -2658,9 +2658,9 @@ function createBuiltinProgram() {
   const schedule = {};
   Object.entries(ROUTINE).forEach(([day,exs]) => { schedule[day] = exs.map(e=>({...e})); });
   const prog = {
-    id, name:'Groundwork Starter',
+    id, name:'Ironpath Starter',
     created:new Date().toISOString(),
-    profile:{level:'intermediate',goal:'Strength',equipment:'Bodyweight',programName:'Groundwork Starter',selectedDays:[true,true,true,true,true,true,true]},
+    profile:{level:'intermediate',goal:'Strength',equipment:'Bodyweight',programName:'Ironpath Starter',selectedDays:[true,true,true,true,true,true,true]},
     schedule,
   };
   state.aiPrograms.unshift(prog);
@@ -4147,7 +4147,7 @@ function closeModal(id, e) { if (e.target.id===id) closeModalById(id); }
 function closeModalById(id) { document.getElementById(id)?.classList.remove('open'); }
 
 function resetProgress() {
-  if (!confirm('Reset all Groundwork data? This cannot be undone.')) return;
+  if (!confirm('Reset all Ironpath data? This cannot be undone.')) return;
   localStorage.removeItem(STORAGE_KEY); location.reload();
 }
 
@@ -4185,7 +4185,7 @@ function init() {
 init();
 
 // ═══════════════════════════════════════════════
-//  GROUNDWORK AUTH
+//  IRONPATH AUTH
 // ═══════════════════════════════════════════════
 
 let _supabase = null;
@@ -4401,13 +4401,16 @@ function _initAuth() {
     sb.auth.getSession().then(async ({data:{session}}) => {
       _authUser = session?.user || null;
       _updateAuthUI();
+      const _ap = new URLSearchParams(window.location.search).get('auth');
       if (_authUser) {
         await _syncDown();
         const _hasRealTargets = state.nutritionTargets && !state.nutritionTargets.skipped;
         if (!_hasRealTargets) setTimeout(()=>openNutritionOnboarding(), 400);
-      } else if (!localStorage.getItem('gw-seen-auth')) {
-        const _ap = new URLSearchParams(window.location.search).get('auth');
+      } else if (_ap === 'signup' || _ap === 'login') {
+        // Always honor explicit ?auth= from landing page
         authPanel(_ap === 'signup' ? 'register' : 'login');
+      } else if (!localStorage.getItem('gw-seen-auth')) {
+        authPanel('login');
       }
     });
   } else {
@@ -4429,22 +4432,33 @@ saveState = function() {
 //  REMOVE USER DATA
 // ═══════════════════════════════════════════════
 async function removeAllUserData() {
-  if (!confirm('Remove ALL of your Groundwork data (cloud + this device)? This cannot be undone.')) return;
-  // Clear session keys first so they can't be restored on reload
-  try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-  try { localStorage.removeItem('gw-seen-auth'); } catch(e) {}
+  if (!confirm('Remove ALL of your Ironpath data (cloud + this device)? This cannot be undone.')) return;
   const sb = _getSupaClient();
+  // 1. Delete cloud row first (while we still have an auth token)
   if (sb && _authUser) {
     try { await sb.from('user_state').delete().eq('user_id', _authUser.id); } catch(e) {}
-    // Always sign out within 2s — don't wait for Supabase if it's slow
     try { await Promise.race([
-      sb.auth.signOut({ scope: 'local' }),
+      sb.auth.signOut({ scope: 'global' }),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2000))
     ]); } catch(e) {}
   }
+  // 2. Wipe ALL device storage (localStorage + sessionStorage + IndexedDB + caches)
+  try { Object.keys(localStorage).forEach(k => localStorage.removeItem(k)); } catch(e) {}
+  try { Object.keys(sessionStorage).forEach(k => sessionStorage.removeItem(k)); } catch(e) {}
+  try {
+    if (window.indexedDB && indexedDB.databases) {
+      const dbs = await indexedDB.databases();
+      dbs.forEach(d => d.name && indexedDB.deleteDatabase(d.name));
+    }
+  } catch(e) {}
+  try {
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  } catch(e) {}
   _authUser = null;
-  location.reload();
+  location.replace('/');
 }
 
 // ═══════════════════════════════════════════════
