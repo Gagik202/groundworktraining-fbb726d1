@@ -3,938 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ironpath — Forge Your Strength</title>
+<title>Ironpath — Forge Your Path of Iron</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --bg2: #131313;
-    --bg3: #1a1a1a;
-    --border: rgba(201,168,76,0.10);
-    --text: #f5f0e0;
-    --muted: rgba(245,240,224,0.45);
-    /* Gold becomes the "green" so legacy classes inherit the new palette */
-    --green: #c9a84c;
-    --green-dim: rgba(201,168,76,0.10);
-    --green-glow: rgba(240,215,140,0.28);
-    --orange: #f0d78c;
-    --blue: #f0d78c;
-    --gold: #c9a84c;
-    --gold-bright: #f0d78c;
-    --radius: 8px;
-    --radius-sm: 5px;
-    --sans: 'Syne', sans-serif;
-    --mono: 'IBM Plex Mono', monospace;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  @keyframes float-y {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.45), 0 10px 40px -10px rgba(201,168,76,0.35); }
-    50%      { box-shadow: 0 0 0 14px rgba(201,168,76,0),    0 10px 50px -8px rgba(240,215,140,0.55); }
-  }
-  @keyframes drift {
-    0% { transform: translate(0,0) rotate(0deg); }
-    50% { transform: translate(30px,-20px) rotate(180deg); }
-    100% { transform: translate(0,0) rotate(360deg); }
-  }
-  .gold-shimmer {
-    background: linear-gradient(110deg, #c9a84c 0%, #f0d78c 25%, #fff5cc 50%, #f0d78c 75%, #c9a84c 100%);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 6s linear infinite;
-  }
-  .btn-primary { animation: pulse-glow 2.6s ease-in-out infinite; }
-  .hero-badge { animation: float-y 4s ease-in-out infinite; }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    background: rgba(10,10,10,0.7);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: var(--green);
-    text-decoration: none;
-  }
-
-  .nav-actions { display: flex; gap: 12px; align-items: center; }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 9px 22px;
-    border-radius: 5px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
-
-  .btn-primary {
-    background: var(--green);
-    border: none;
-    color: #0c0c0c;
-    padding: 10px 24px;
-    border-radius: 6px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn-primary:hover { background: #cdfb72; transform: translateY(-1px); box-shadow: 0 4px 16px var(--green-glow); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 24px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-glow {
-    position: absolute;
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, rgba(184,245,90,0.08) 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--green-dim);
-    border: 1px solid rgba(90,247,142,0.2);
-    color: var(--green);
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: var(--mono);
-    margin-bottom: 32px;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .ai-dot {
-    width: 6px; height: 6px;
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.5); }
-  }
-
-  h1 {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: clamp(72px, 12vw, 160px);
-    line-height: 0.9;
-    letter-spacing: 4px;
-    animation: fadeUp 0.6s 0.1s ease both;
-    position: relative;
-  }
-
-  h1 span { color: var(--green); }
-
-  .hero-sub {
-    font-size: clamp(16px, 2vw, 20px);
-    color: var(--muted);
-    max-width: 560px;
-    margin: 24px auto 40px;
-    font-weight: 300;
-    animation: fadeUp 0.6s 0.2s ease both;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeUp 0.6s 0.3s ease both;
-  }
-
-  .btn-xl {
-    padding: 16px 36px;
-    font-size: 16px;
-    border-radius: 6px;
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 48px;
-    margin-top: 80px;
-    animation: fadeUp 0.6s 0.4s ease both;
-  }
-
-  .hero-stat { text-align: center; }
-  .hero-stat-num {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 48px;
-    color: var(--green);
-    line-height: 1;
-  }
-  .hero-stat-lbl {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--mono);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-  }
-
-  /* ── RATING STRIP ── */
-  .rating-strip {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 32px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 64px;
-    flex-wrap: wrap;
-  }
-
-  .rating-item { display: flex; align-items: center; gap: 12px; }
-  .rating-stars { display: flex; gap: 3px; }
-  .star { color: var(--orange); font-size: 18px; }
-  .rating-score {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 36px;
-    color: var(--text);
-    line-height: 1;
-  }
-  .rating-label {
-    font-size: 13px;
-    color: var(--muted);
-    font-family: var(--mono);
-  }
-
-  .rating-divider {
-    width: 1px; height: 48px;
-    background: var(--border);
-  }
-
-  /* ── SECTIONS ── */
-  section { position: relative; z-index: 1; }
-
-  .section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 100px 24px;
-  }
-
-  .section-tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 16px;
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 6vw, 72px);
-    line-height: 0.95;
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-  }
-
-  .section-body {
-    font-size: 17px;
-    color: var(--muted);
-    max-width: 560px;
-    font-weight: 300;
-    line-height: 1.7;
-  }
-
-  /* ── FEATURES GRID ── */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-top: 64px;
-  }
-
-  .feature-card {
-    background: var(--bg);
-    padding: 36px;
-    transition: background 0.2s;
-    position: relative;
-  }
-  .feature-card:hover { background: var(--bg3); }
-
-  .feature-icon {
-    width: 48px; height: 48px;
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-
-  .feature-icon.green { background: var(--green-dim); }
-  .feature-icon.orange { background: rgba(255,123,58,0.12); }
-  .feature-icon.blue { background: rgba(90,180,245,0.12); }
-  .feature-icon.gold { background: rgba(245,200,66,0.12); }
-
-  .feature-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  .feature-desc {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .ai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--green-dim);
-    border: 1px solid rgba(90,247,142,0.2);
-    color: var(--green);
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-family: var(--mono);
-    font-weight: 500;
-    position: absolute;
-    top: 20px; right: 20px;
-  }
-
-  /* ── BENEFITS ── */
-  .benefits-section { background: var(--bg2); }
-
-  .benefits-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    margin-top: 64px;
-    align-items: start;
-  }
-
-  .benefit-list { display: flex; flex-direction: column; gap: 24px; }
-
-  .benefit-item {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 24px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg);
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .benefit-item:hover { border-color: rgba(90,247,142,0.25); transform: translateX(4px); }
-
-  .benefit-num {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 32px;
-    color: var(--green);
-    line-height: 1;
-    min-width: 36px;
-    opacity: 0.4;
-  }
-
-  .benefit-content h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-  .benefit-content p { font-size: 14px; color: var(--muted); }
-
-  .benefits-visual {
-    position: sticky;
-    top: 100px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .mock-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .mock-title { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
-  .mock-body { padding: 20px; }
-
-  .mock-stat-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .mock-stat {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    text-align: center;
-  }
-  .mock-stat-n {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 28px;
-    color: var(--green);
-    line-height: 1;
-  }
-  .mock-stat-l { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-
-  .mock-bar-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .mock-bar-item { display: flex; flex-direction: column; gap: 5px; }
-  .mock-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-family: var(--mono); }
-  .mock-bar-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .mock-bar-fill { height: 100%; border-radius: 3px; }
-
-  .mock-water-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .mock-glass { width: 28px; height: 36px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); }
-  .mock-glass.filled { background: rgba(90,180,245,0.3); border-color: rgba(90,180,245,0.4); }
-
-  /* ── PRICING/CTA ── */
-  .cta-section {
-    text-align: center;
-    padding: 120px 24px;
-    background: var(--bg);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-glow {
-    position: absolute;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(184,245,90,0.06) 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .cta-free-badge {
-    display: inline-block;
-    background: var(--green);
-    color: #0c0c0c;
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    padding: 6px 16px;
-    border-radius: 6px;
-    margin-bottom: 24px;
-  }
-
-  .cta-title {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: clamp(48px, 8vw, 100px);
-    line-height: 0.9;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-  }
-
-  .cta-sub {
-    font-size: 18px;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto 48px;
-    font-weight: 300;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  .footer-logo {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 20px;
-    letter-spacing: 3px;
-    color: var(--green);
-  }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(12px);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .modal {
-    background: var(--bg2);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    width: 100%;
-    max-width: 420px;
-    padding: 40px;
-    transform: translateY(20px);
-    transition: transform 0.3s;
-    position: relative;
-  }
-
-  .modal-overlay.open .modal { transform: translateY(0); }
-
-  .modal-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    width: 32px; height: 32px;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-  .modal-close:hover { color: var(--text); border-color: var(--text); }
-
-  .modal-logo {
-    font-family: 'Bebas Neue', 'Syne', sans-serif;
-    font-size: 32px;
-    letter-spacing: 3px;
-    color: var(--green);
-    margin-bottom: 8px;
-  }
-
-  .modal-subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 32px;
-  }
-
-  .modal-tabs {
-    display: flex;
-    gap: 0;
-    background: var(--bg3);
-    border-radius: 6px;
-    padding: 4px;
-    margin-bottom: 28px;
-  }
-
-  .modal-tab {
-    flex: 1;
-    padding: 9px;
-    border-radius: 6px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .modal-tab.active { background: var(--bg); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-
-  .modal-features {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 28px;
-  }
-
-  .modal-feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .modal-feature::before {
-    content: '✓';
-    color: var(--green);
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .modal-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 20px 0;
-    color: var(--muted);
-    font-size: 12px;
-    font-family: var(--mono);
-  }
-  .modal-divider::before, .modal-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .btn-full {
-    width: 100%;
-    padding: 14px;
-    font-size: 15px;
-    border-radius: var(--radius);
-    text-align: center;
-  }
-
-  .groundwork-link {
-    display: block;
-    text-align: center;
-    margin-top: 16px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .groundwork-link a {
-    color: var(--green);
-    text-decoration: none;
-  }
-  .groundwork-link a:hover { text-decoration: underline; }
-
-  /* ── SCROLL ANIMATIONS ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    nav { padding: 16px 20px; }
-    .hero-stats { gap: 24px; }
-    .rating-strip { gap: 24px; padding: 24px 20px; }
-    .rating-divider { display: none; }
-    .benefits-grid { grid-template-columns: 1fr; }
-    .benefits-visual { display: none; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --bg:#0a0a0a;--s:#111;--lift:#181818;
+  --b:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);
+  --text:#f0ede6;--dim:rgba(240,237,230,0.42);--mid:rgba(240,237,230,0.65);
+  --green:#5af78e;--gdim:rgba(90,247,142,0.08);--glow:rgba(90,247,142,0.22);
+  --amber:#f5a623;--blue:#6eb6ff;
+  --sans:'Syne',sans-serif;--mono:'IBM Plex Mono',monospace;--disp:'Bebas Neue',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:2px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 52px;height:62px;transition:all .4s;}
+nav.scrolled{background:rgba(10,10,10,0.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--b);}
+.nav-brand{font-family:var(--disp);font-size:24px;letter-spacing:5px;color:var(--text);text-decoration:none;}
+.nav-brand:hover{color:var(--green);}
+.nav-r{display:flex;gap:12px;align-items:center;}
+.btn-nav-ghost{background:transparent;border:1px solid var(--b2);color:var(--mid);padding:8px 22px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.03em;transition:all .18s;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-nav-ghost:hover{border-color:var(--text);color:var(--text);}
+.btn-nav-cta{background:var(--green);border:none;color:#050505;padding:9px 24px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:all .18s;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-nav-cta:hover{background:#78ffaa;transform:translateY(-1px);box-shadow:0 6px 24px var(--glow);}
+
+/* ═══ HERO ═══ */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 100px;overflow:hidden;}
+
+/* animated grid */
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:72px 72px;animation:gridMove 24s linear infinite;}
+@keyframes gridMove{0%{background-position:0 0;}100%{background-position:72px 72px;}}
+
+/* vignette */
+.hvignette{position:absolute;inset:0;background:radial-gradient(ellipse 75% 65% at 50% 50%,transparent 20%,var(--bg) 100%);}
+
+/* orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;}
+.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(90,247,142,0.055),transparent 68%);top:-15%;left:-8%;animation:oFloat 14s ease-in-out infinite;}
+.o2{width:550px;height:550px;background:radial-gradient(circle,rgba(110,182,255,0.04),transparent 68%);bottom:-10%;right:-6%;animation:oFloat 11s ease-in-out infinite;animation-delay:-5s;}
+.o3{width:350px;height:350px;background:radial-gradient(circle,rgba(245,166,35,0.035),transparent 68%);top:35%;right:15%;animation:oFloat 9s ease-in-out infinite;animation-delay:-3s;}
+@keyframes oFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-40px);}}
+
+.hcontent{position:relative;z-index:2;}
+
+/* Badge */
+.hbadge{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--b2);color:var(--dim);padding:7px 18px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:44px;animation:fUp .9s .1s both;}
+.bdot{width:6px;height:6px;background:var(--green);border-radius:50%;flex-shrink:0;animation:bPulse 2s infinite;}
+@keyframes bPulse{0%,100%{box-shadow:0 0 0 0 rgba(90,247,142,.5);}50%{box-shadow:0 0 0 7px rgba(90,247,142,0);}}
+
+/* GIANT TYPE */
+.htitle{font-family:var(--disp);line-height:.85;letter-spacing:1px;animation:fUp .9s .2s both;margin-bottom:0;user-select:none;}
+.htitle .row1{display:block;font-size:clamp(90px,15vw,200px);color:var(--text);}
+.htitle .row2{display:block;font-size:clamp(90px,15vw,200px);color:var(--green);position:relative;}
+.htitle .row3{display:block;font-size:clamp(90px,15vw,200px);color:var(--text);}
+
+/* glitch on row2 */
+.htitle .row2::before{content:attr(data-t);position:absolute;left:0;top:0;color:var(--green);clip-path:inset(0 0 80% 0);animation:glitch1 5s infinite;}
+.htitle .row2::after{content:attr(data-t);position:absolute;left:0;top:0;color:var(--blue);opacity:.4;clip-path:inset(70% 0 0 0);animation:glitch2 5s infinite;}
+@keyframes glitch1{0%,85%,100%{transform:none;opacity:1;}86%{transform:translate(-3px,0);opacity:.8;}88%{transform:translate(2px,0);}90%{transform:none;}}
+@keyframes glitch2{0%,85%,100%{transform:none;opacity:.4;}87%{transform:translate(3px,0);opacity:.6;}89%{transform:translate(-1px,0);}91%{transform:none;}}
+
+.hsub{font-family:var(--mono);font-size:clamp(12px,1.4vw,14px);color:var(--dim);max-width:500px;margin:36px auto 52px;line-height:1.85;letter-spacing:.03em;animation:fUp .9s .38s both;}
+
+.hactions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fUp .9s .52s both;}
+.btn-hero{padding:17px 44px;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.btn-hero-g{padding:16px 44px;font-size:14px;font-weight:600;letter-spacing:.04em;}
+
+/* scroll cue */
+.scroller{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:fUp 1s .9s both;cursor:pointer;}
+.scroller span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);}
+.scroll-line{width:1px;height:36px;background:linear-gradient(var(--dim),transparent);animation:scPulse 2.2s ease-in-out infinite;}
+@keyframes scPulse{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+@keyframes fUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar{display:flex;border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:var(--s);overflow:hidden;}
+.sb-item{flex:1;padding:26px 16px;text-align:center;border-right:1px solid var(--b);position:relative;overflow:hidden;transition:background .25s;}
+.sb-item:last-child{border-right:none;}
+.sb-item:hover{background:var(--lift);}
+.sb-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform .3s;}
+.sb-item:hover::after{transform:scaleX(1);}
+.sb-n{font-family:var(--disp);font-size:44px;color:var(--green);line-height:1;letter-spacing:1px;}
+.sb-l{font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;margin-top:5px;}
+
+/* ═══ TICKER ═══ */
+.ticker{background:var(--bg);border-bottom:1px solid var(--b);padding:13px 0;overflow:hidden;position:relative;}
+.ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:1;pointer-events:none;}
+.ticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
+.ticker::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent);}
+.ticker-track{display:flex;animation:tick 30s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 36px;font-family:var(--mono);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;}
+.tdot{width:4px;height:4px;background:var(--green);border-radius:50%;flex-shrink:0;}
+@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ═══ SECTION BASE ═══ */
+.si{max-width:1120px;margin:0 auto;padding:110px 36px;}
+.stag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:16px;}
+.sh{font-family:var(--disp);font-size:clamp(52px,7vw,96px);line-height:.9;letter-spacing:1px;margin-bottom:22px;}
+.sb-t{font-family:var(--mono);font-size:12px;color:var(--dim);max-width:480px;line-height:1.85;letter-spacing:.02em;}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.vis{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+
+/* ═══ FEATURES ═══ */
+.features-bg{background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b);}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--b);overflow:hidden;margin-top:64px;gap:1px;background:var(--b);}
+.fcard{background:var(--bg);padding:32px;position:relative;overflow:hidden;transition:background .25s;cursor:default;}
+.fcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue));transform:scaleX(0);transform-origin:left;transition:transform .35s ease;}
+.fcard::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(90,247,142,.05),transparent 60%);opacity:0;transition:opacity .3s;}
+.fcard:hover{background:var(--lift);}
+.fcard:hover::before{transform:scaleX(1);}
+.fcard:hover::after{opacity:1;}
+.ficon{width:40px;height:40px;background:var(--lift);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:18px;transition:border-color .25s,background .25s;}
+.fcard:hover .ficon{border-color:rgba(90,247,142,.35);background:var(--gdim);}
+.ftitle{font-size:15px;font-weight:700;color:var(--text);margin-bottom:9px;letter-spacing:-.01em;}
+.fdesc{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.75;}
+.aibadge{position:absolute;top:18px;right:18px;display:inline-flex;align-items:center;gap:5px;background:var(--gdim);border:1px solid rgba(90,247,142,.18);color:var(--green);padding:3px 9px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* ═══ BENEFITS ═══ */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:64px;align-items:start;}
+.blist{display:flex;flex-direction:column;gap:2px;}
+.bitem{display:flex;gap:18px;align-items:flex-start;padding:22px;border:1px solid var(--b);background:var(--bg);transition:border-color .2s,background .2s,transform .2s;cursor:default;}
+.bitem:hover{border-color:var(--b2);background:var(--lift);transform:translateX(5px);}
+.bnum{font-family:var(--disp);font-size:32px;color:var(--b2);line-height:1;min-width:38px;transition:color .2s;}
+.bitem:hover .bnum{color:var(--green);}
+.bcontent h3{font-size:14px;font-weight:700;margin-bottom:5px;color:var(--text);}
+.bcontent p{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.75;}
+
+/* mock app */
+.mockapp{position:sticky;top:80px;background:var(--s);border:1px solid var(--b);overflow:hidden;}
+.mock-hdr{height:46px;background:var(--bg);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 18px;}
+.mock-brand{font-family:var(--disp);font-size:18px;letter-spacing:4px;color:var(--text);}
+.mock-stats{display:flex;gap:14px;}
+.mock-stat{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.mock-stat span{color:var(--green);}
+.mock-body{display:flex;height:360px;}
+.mock-sb{width:130px;border-right:1px solid var(--b);padding:12px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;}
+.mock-nav{padding:7px 8px;font-family:var(--mono);font-size:10px;color:var(--dim);display:flex;align-items:center;gap:6px;}
+.mock-nav.a{background:var(--lift);color:var(--text);}
+.mock-ndot{width:5px;height:5px;background:var(--b2);}
+.mock-nav.a .mock-ndot{background:var(--green);}
+.mock-content{flex:1;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:hidden;}
+.mock-card{background:var(--lift);border:1px solid var(--b);padding:12px;}
+.mock-clbl{font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.mock-bars{display:flex;flex-direction:column;gap:8px;}
+.mock-br{display:flex;align-items:center;gap:8px;}
+.mock-bl{font-family:var(--mono);font-size:9px;color:var(--dim);width:48px;flex-shrink:0;}
+.mock-bt{flex:1;height:3px;background:rgba(255,255,255,0.06);}
+.mock-bf{height:100%;transition:width 1.5s ease;}
+.mock-bv{font-family:var(--mono);font-size:9px;color:var(--mid);width:60px;text-align:right;flex-shrink:0;}
+.mock-glasses{display:flex;gap:4px;flex-wrap:wrap;}
+.mock-g{width:22px;height:28px;border:1px solid var(--b);background:var(--bg);}
+.mock-g.f{background:rgba(110,182,255,.25);border-color:rgba(110,182,255,.35);}
+.mock-ai{background:var(--gdim);border:1px solid rgba(90,247,142,.14);padding:10px;display:flex;align-items:flex-start;gap:9px;}
+.mock-ai-ico{font-size:16px;flex-shrink:0;}
+.mock-ai-lbl{font-family:var(--mono);font-size:8px;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.mock-ai-txt{font-family:var(--mono);font-size:10px;color:var(--dim);line-height:1.5;transition:opacity .3s;}
+
+/* animated bars */
+.bars-go .bf1{width:84%;}
+.bars-go .bf2{width:78%;}
+.bars-go .bf3{width:65%;}
+.bars-go .bf4{width:90%;}
+
+/* ═══ RATING ═══ */
+.rating-section{background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b);}
+.rating-inner{max-width:1120px;margin:0 auto;padding:44px 36px;display:flex;align-items:center;justify-content:center;}
+.ri{display:flex;align-items:center;gap:24px;padding:0 52px;border-right:1px solid var(--b);}
+.ri:last-child{border-right:none;}
+.rstars{display:flex;gap:3px;margin-bottom:4px;}
+.star{color:var(--amber);font-size:15px;}
+.rlbl{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.rscore{font-family:var(--disp);font-size:52px;color:var(--text);line-height:1;}
+
+/* ═══ CTA ═══ */
+.cta-section{text-align:center;padding:140px 24px;background:var(--bg);position:relative;overflow:hidden;border-top:1px solid var(--b);}
+.cta-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;opacity:.5;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black 10%,transparent 100%);}
+.cta-inner{position:relative;z-index:1;}
+.cta-tag{display:inline-block;border:1px solid var(--b2);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:6px 16px;margin-bottom:28px;}
+.cta-h{font-family:var(--disp);font-size:clamp(72px,13vw,160px);line-height:.85;letter-spacing:1px;margin-bottom:28px;}
+.cta-h span{color:var(--green);}
+.cta-sub{font-family:var(--mono);font-size:12px;color:var(--dim);max-width:420px;margin:0 auto 48px;line-height:1.85;}
+.btn-cta-xl{padding:18px 52px;font-size:16px;font-weight:700;letter-spacing:.04em;}
+
+/* ═══ FOOTER ═══ */
+footer{border-top:1px solid var(--b);padding:28px 52px;display:flex;align-items:center;justify-content:space-between;}
+.f-brand{font-family:var(--disp);font-size:22px;letter-spacing:4px;color:var(--text);}
+.f-copy{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.f-actions{display:flex;gap:10px;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  nav{padding:0 24px;}
+  .fgrid{grid-template-columns:1fr;}
+  .bgrid{grid-template-columns:1fr;}
+  .mockapp{display:none;}
+  .rating-inner{flex-direction:column;gap:0;}
+  .ri{border-right:none;border-bottom:1px solid var(--b);padding:22px 36px;width:100%;}
+  .ri:last-child{border-bottom:none;}
+  footer{flex-direction:column;gap:16px;text-align:center;}
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a class="nav-logo" href="#">IRONPATH</a>
-  <div class="nav-actions">
-    <button class="btn-ghost" onclick="goAuth('login')">Sign in</button>
-    <button class="btn-primary" onclick="goAuth('signup')">Get started free</button>
+<nav id="nav">
+  <a class="nav-brand" href="#">IRONPATH</a>
+  <div class="nav-r">
+    <a class="btn-nav-ghost" href="/app?auth=login">Sign in</a>
+    <a class="btn-nav-cta" href="/app?auth=signup">Get started free</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-badge"><span class="ai-dot"></span> AI-Powered Training Platform</div>
-  <h1>FORGE<br><span class="gold-shimmer">YOUR PATH.</span><br>OF IRON.</h1>
-  <p class="hero-sub">Ironpath is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
-  <div class="hero-actions">
-    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Start for free</button>
-    <button class="btn-ghost btn-xl" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See what's inside ↓</button>
+  <div class="hgrid"></div>
+  <div class="hvignette"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="hcontent">
+    <div class="hbadge"><span class="bdot"></span>AI-Powered Training Platform</div>
+    <h1 class="htitle">
+      <span class="row1">FORGE</span>
+      <span class="row2" data-t="YOUR PATH.">YOUR PATH.</span>
+      <span class="row3">OF IRON.</span>
+    </h1>
+    <p class="hsub">Ironpath is your personal AI fitness coach — building workouts, tracking nutrition, and keeping you accountable every single day.</p>
+    <div class="hactions">
+      <a class="btn-nav-cta btn-hero" href="/app?auth=signup">Start for free →</a>
+      <a class="btn-nav-ghost btn-hero-g" href="#features">See what's inside</a>
+    </div>
   </div>
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num">4.9</div>
-      <div class="hero-stat-lbl">Rating</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">100%</div>
-      <div class="hero-stat-lbl">Free</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">AI</div>
-      <div class="hero-stat-lbl">Powered</div>
-    </div>
+  <div class="scroller" onclick="document.getElementById('stats').scrollIntoView({behavior:'smooth'})">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
   </div>
 </div>
 
-<!-- RATING STRIP -->
-<div class="rating-strip reveal">
-  <div class="rating-item">
-    <div>
-      <div class="rating-stars">
-        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-      </div>
-      <div class="rating-label" style="margin-top:4px">Overall experience</div>
-    </div>
-    <div class="rating-score">4.9</div>
+<!-- STATS BAR -->
+<div class="stats-bar" id="stats">
+  <div class="sb-item"><div class="sb-n" id="cnt-rating">0.0</div><div class="sb-l">Platform rating</div></div>
+  <div class="sb-item"><div class="sb-n">100%</div><div class="sb-l">Free forever</div></div>
+  <div class="sb-item"><div class="sb-n" style="color:var(--amber)">AI</div><div class="sb-l">Powered coach</div></div>
+  <div class="sb-item"><div class="sb-n" id="cnt-feat">0</div><div class="sb-l">Features</div></div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="tdot"></span>AI Personal Coach</span>
+    <span class="ticker-item"><span class="tdot"></span>Workout Programs</span>
+    <span class="ticker-item"><span class="tdot"></span>Nutrition Tracking</span>
+    <span class="ticker-item"><span class="tdot"></span>Hydration Monitor</span>
+    <span class="ticker-item"><span class="tdot"></span>XP &amp; Levels</span>
+    <span class="ticker-item"><span class="tdot"></span>Weekly Planner</span>
+    <span class="ticker-item"><span class="tdot"></span>Achievements</span>
+    <span class="ticker-item"><span class="tdot"></span>Cloud Sync</span>
+    <span class="ticker-item"><span class="tdot"></span>Goal Tracking</span>
+    <span class="ticker-item"><span class="tdot"></span>AI Personal Coach</span>
+    <span class="ticker-item"><span class="tdot"></span>Workout Programs</span>
+    <span class="ticker-item"><span class="tdot"></span>Nutrition Tracking</span>
+    <span class="ticker-item"><span class="tdot"></span>Hydration Monitor</span>
+    <span class="ticker-item"><span class="tdot"></span>XP &amp; Levels</span>
+    <span class="ticker-item"><span class="tdot"></span>Weekly Planner</span>
+    <span class="ticker-item"><span class="tdot"></span>Achievements</span>
+    <span class="ticker-item"><span class="tdot"></span>Cloud Sync</span>
+    <span class="ticker-item"><span class="tdot"></span>Goal Tracking</span>
   </div>
-  <div class="rating-divider"></div>
-  <div class="rating-item">
-    <div>
-      <div class="rating-stars">
-        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-      </div>
-      <div class="rating-label" style="margin-top:4px">AI coach quality</div>
-    </div>
-    <div class="rating-score">5.0</div>
-  </div>
-  <div class="rating-divider"></div>
-  <div class="rating-item">
-    <div>
-      <div class="rating-stars">
-        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-      </div>
-      <div class="rating-label" style="margin-top:4px">Ease of use</div>
-    </div>
-    <div class="rating-score">4.8</div>
+</div>
+
+<!-- RATING -->
+<div class="rating-section reveal">
+  <div class="rating-inner">
+    <div class="ri"><div><div class="rstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rlbl">Overall experience</div></div><div class="rscore">4.9</div></div>
+    <div class="ri"><div><div class="rstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rlbl">AI coach quality</div></div><div class="rscore">5.0</div></div>
+    <div class="ri"><div><div class="rstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rlbl">Ease of use</div></div><div class="rscore">4.8</div></div>
   </div>
 </div>
 
 <!-- FEATURES -->
-<section id="features">
-  <div class="section-inner">
+<section class="features-bg" id="features">
+  <div class="si">
     <div class="reveal">
-      <div class="section-tag">Everything you need</div>
-      <h2 class="section-title">ONE PLATFORM.<br>EVERY TOOL.</h2>
-      <p class="section-body">From AI-generated workout plans to real-time nutrition tracking — Ironpath gives you everything a personal trainer would, without the cost.</p>
+      <div class="stag">// Everything you need</div>
+      <h2 class="sh">ONE PLATFORM.<br>EVERY TOOL.</h2>
+      <p class="sb-t">From AI-generated plans to real-time nutrition tracking — everything a personal trainer gives you, completely free.</p>
     </div>
-    <div class="features-grid reveal">
-
-      <div class="feature-card">
-        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
-        <div class="feature-icon green">🤖</div>
-        <div class="feature-title">AI Personal Coach</div>
-        <div class="feature-desc">Chat with your built-in AI trainer anytime. Get personalized workout advice, form tips, and motivation tailored to your goals and fitness level.</div>
-      </div>
-
-      <div class="feature-card">
-        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
-        <div class="feature-icon green">🎯</div>
-        <div class="feature-title">Smart Onboarding</div>
-        <div class="feature-desc">Tell the AI your goals, body stats, and experience level. It instantly generates your personalized nutrition targets and daily calorie goals.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon orange">🏋️</div>
-        <div class="feature-title">Workout Programs</div>
-        <div class="feature-desc">Build custom programs with exercises, sets, reps, and rest times. Mark sets complete as you go and earn XP for every workout finished.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon orange">📅</div>
-        <div class="feature-title">Weekly Planner</div>
-        <div class="feature-desc">Schedule your training week with a drag-free calendar. See your daily plan at a glance and stay consistent with automatic streak tracking.</div>
-      </div>
-
-      <div class="feature-card">
-        <span class="ai-badge"><span class="ai-dot"></span> AI</span>
-        <div class="feature-icon blue">🥗</div>
-        <div class="feature-title">Nutrition Tracking</div>
-        <div class="feature-desc">Log meals and track calories, protein, carbs, and fat with AI-set targets. Quick-add common foods or enter custom macros in seconds.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon blue">💧</div>
-        <div class="feature-title">Hydration Monitor</div>
-        <div class="feature-desc">Track your daily water intake with a visual glass counter. Your hydration goal is set automatically based on your body weight and activity level.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon gold">⚡</div>
-        <div class="feature-title">XP & Levels</div>
-        <div class="feature-desc">Earn experience points for every workout, completed day, and milestone reached. Level up as you get stronger and watch your progress grow.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon gold">🏆</div>
-        <div class="feature-title">Achievements & Milestones</div>
-        <div class="feature-desc">Unlock milestone achievements as you hit streaks, XP thresholds, and training goals. Track your entire fitness journey in the progress dashboard.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon green">☁️</div>
-        <div class="feature-title">Cloud Sync</div>
-        <div class="feature-desc">Your data syncs across all your devices automatically. Sign in on any browser and pick up exactly where you left off — nothing is ever lost.</div>
-      </div>
-
+    <div class="fgrid reveal d1">
+      <div class="fcard"><span class="aibadge"><span class="bdot"></span>AI</span><div class="ficon">🤖</div><div class="ftitle">AI Personal Coach</div><div class="fdesc">Chat with your built-in trainer anytime. Personalized advice, form tips, and motivation tailored to your level and goals.</div></div>
+      <div class="fcard"><span class="aibadge"><span class="bdot"></span>AI</span><div class="ficon">🎯</div><div class="ftitle">Smart Onboarding</div><div class="fdesc">Tell the AI your body stats and goals. It instantly calculates your personalized calorie targets, macros, and hydration needs.</div></div>
+      <div class="fcard"><div class="ficon">🏋️</div><div class="ftitle">Workout Programs</div><div class="fdesc">Build custom programs with exercises, sets, reps, and rest times. Earn XP for every completed workout.</div></div>
+      <div class="fcard"><div class="ficon">📅</div><div class="ftitle">Weekly Planner</div><div class="fdesc">Schedule your training week visually. See your daily plan at a glance and stay consistent with automatic streak tracking.</div></div>
+      <div class="fcard"><span class="aibadge"><span class="bdot"></span>AI</span><div class="ficon">🥗</div><div class="ftitle">Nutrition Tracking</div><div class="fdesc">Log meals and track calories, protein, carbs, and fat against AI-set targets. Quick-add common foods in seconds.</div></div>
+      <div class="fcard"><div class="ficon">💧</div><div class="ftitle">Hydration Monitor</div><div class="fdesc">Visual glass counter tracks daily water intake. Your goal is set automatically based on your body weight and activity level.</div></div>
+      <div class="fcard"><div class="ficon">⚡</div><div class="ftitle">XP &amp; Levels</div><div class="fdesc">Earn experience points for every workout, milestone, and completed day. Level up as you build strength and consistency.</div></div>
+      <div class="fcard"><div class="ficon">🏆</div><div class="ftitle">Achievements</div><div class="fdesc">Unlock milestones as you hit streaks, XP thresholds, and training goals. Your full journey tracked in the progress dashboard.</div></div>
+      <div class="fcard"><div class="ficon">☁️</div><div class="ftitle">Cloud Sync</div><div class="fdesc">Data syncs across all your devices automatically. Sign in on any browser and pick up exactly where you left off.</div></div>
     </div>
   </div>
 </section>
 
 <!-- BENEFITS -->
-<section class="benefits-section">
-  <div class="section-inner">
+<section>
+  <div class="si">
     <div class="reveal">
-      <div class="section-tag">Why Ironpath</div>
-      <h2 class="section-title">BUILT FOR<br>REAL RESULTS.</h2>
+      <div class="stag">// Why Ironpath</div>
+      <h2 class="sh">BUILT FOR<br>REAL RESULTS.</h2>
     </div>
-    <div class="benefits-grid">
-      <div class="benefit-list reveal">
-        <div class="benefit-item">
-          <div class="benefit-num">01</div>
-          <div class="benefit-content">
-            <h3>Completely free, forever</h3>
-            <p>No subscriptions, no paywalls, no hidden fees. Every feature — including AI coaching — is free for everyone.</p>
-          </div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-num">02</div>
-          <div class="benefit-content">
-            <h3>Personalized from day one</h3>
-            <p>The AI onboarding sets your nutrition targets, calorie goals, and hydration levels based on your unique profile.</p>
-          </div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-num">03</div>
-          <div class="benefit-content">
-            <h3>Keeps you accountable</h3>
-            <p>Streaks, XP, levels, and achievements are designed to build habits — not just track workouts.</p>
-          </div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-num">04</div>
-          <div class="benefit-content">
-            <h3>Works anywhere</h3>
-            <p>Cloud-synced and mobile-friendly. Your training plan is always available, even on the go.</p>
-          </div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-num">05</div>
-          <div class="benefit-content">
-            <h3>AI coach always available</h3>
-            <p>Ask your AI trainer anything — injury questions, form advice, plateau-breaking tips — 24/7, no waiting.</p>
-          </div>
-        </div>
+    <div class="bgrid">
+      <div class="blist reveal">
+        <div class="bitem"><div class="bnum">01</div><div class="bcontent"><h3>Completely free, forever</h3><p>No subscriptions, no paywalls. Every feature including AI coaching is free for every user.</p></div></div>
+        <div class="bitem"><div class="bnum">02</div><div class="bcontent"><h3>Personalized from day one</h3><p>AI onboarding calculates your nutrition targets, calorie goals, and hydration based on your unique profile.</p></div></div>
+        <div class="bitem"><div class="bnum">03</div><div class="bcontent"><h3>Keeps you accountable</h3><p>Streaks, XP, levels, and achievements are designed to build real habits — not just track workouts.</p></div></div>
+        <div class="bitem"><div class="bnum">04</div><div class="bcontent"><h3>Works anywhere</h3><p>Cloud-synced and mobile-friendly. Your training plan is always available, even on the go.</p></div></div>
+        <div class="bitem"><div class="bnum">05</div><div class="bcontent"><h3>AI coach 24/7</h3><p>Ask your AI trainer anything — injury questions, form tips, plateau-breaking advice — anytime, instantly.</p></div></div>
       </div>
-
-      <div class="benefits-visual reveal">
-        <div class="mock-header">
-          <div class="mock-dot" style="background:#ff5f57"></div>
-          <div class="mock-dot" style="background:#febc2e"></div>
-          <div class="mock-dot" style="background:#28c840"></div>
-          <div class="mock-title">groundwork — dashboard</div>
+      <div class="mockapp reveal d2" id="mockapp">
+        <div class="mock-hdr">
+          <span class="mock-brand">IRONPATH</span>
+          <div class="mock-stats">
+            <span class="mock-stat">LVL <span id="mlvl">1</span></span>
+            <span class="mock-stat"><span id="mxp">0</span> XP</span>
+            <span class="mock-stat">🔥 <span id="mstreak">0</span></span>
+          </div>
         </div>
         <div class="mock-body">
-          <div class="mock-stat-row">
-            <div class="mock-stat"><div class="mock-stat-n">12</div><div class="mock-stat-l">Level</div></div>
-            <div class="mock-stat"><div class="mock-stat-n" style="color:var(--orange)">2,840</div><div class="mock-stat-l">Total XP</div></div>
-            <div class="mock-stat"><div class="mock-stat-n" style="color:var(--blue)">🔥 14</div><div class="mock-stat-l">Streak</div></div>
+          <div class="mock-sb">
+            <div class="mock-nav a"><span class="mock-ndot"></span>Today</div>
+            <div class="mock-nav"><span class="mock-ndot"></span>Calendar</div>
+            <div class="mock-nav"><span class="mock-ndot"></span>Progress</div>
+            <div class="mock-nav"><span class="mock-ndot"></span>Nutrition</div>
+            <div class="mock-nav"><span class="mock-ndot"></span>Milestones</div>
           </div>
-          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Nutrition today</div>
-          <div class="mock-bar-row">
-            <div class="mock-bar-item">
-              <div class="mock-bar-label"><span>Calories</span><span style="color:var(--text)">1,840 / 2,200</span></div>
-              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:83%;background:var(--green)"></div></div>
+          <div class="mock-content">
+            <div class="mock-card">
+              <div class="mock-clbl">Daily nutrition</div>
+              <div class="mock-bars" id="mbars">
+                <div class="mock-br"><span class="mock-bl">Calories</span><div class="mock-bt"><div class="mock-bf bf1" style="width:0;background:var(--green)"></div></div><span class="mock-bv">1,840/2,200</span></div>
+                <div class="mock-br"><span class="mock-bl">Protein</span><div class="mock-bt"><div class="mock-bf bf2" style="width:0;background:var(--amber)"></div></div><span class="mock-bv">124/150g</span></div>
+                <div class="mock-br"><span class="mock-bl">Carbs</span><div class="mock-bt"><div class="mock-bf bf3" style="width:0;background:var(--blue)"></div></div><span class="mock-bv">198/250g</span></div>
+                <div class="mock-br"><span class="mock-bl">Fat</span><div class="mock-bt"><div class="mock-bf bf4" style="width:0;background:var(--amber)"></div></div><span class="mock-bv">63/70g</span></div>
+              </div>
             </div>
-            <div class="mock-bar-item">
-              <div class="mock-bar-label"><span>Protein</span><span style="color:var(--text)">124 / 150g</span></div>
-              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:82%;background:var(--orange)"></div></div>
+            <div class="mock-card">
+              <div class="mock-clbl">Hydration — 6 / 8</div>
+              <div class="mock-glasses">
+                <div class="mock-g f"></div><div class="mock-g f"></div><div class="mock-g f"></div>
+                <div class="mock-g f"></div><div class="mock-g f"></div><div class="mock-g f"></div>
+                <div class="mock-g"></div><div class="mock-g"></div>
+              </div>
             </div>
-            <div class="mock-bar-item">
-              <div class="mock-bar-label"><span>Carbs</span><span style="color:var(--text)">198 / 250g</span></div>
-              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:79%;background:var(--blue)"></div></div>
-            </div>
-            <div class="mock-bar-item">
-              <div class="mock-bar-label"><span>Fat</span><span style="color:var(--text)">52 / 70g</span></div>
-              <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%;background:var(--gold)"></div></div>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:16px 0 10px;text-transform:uppercase;letter-spacing:1px;">Hydration — 6 / 8</div>
-          <div class="mock-water-row">
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass filled"></div>
-            <div class="mock-glass"></div>
-            <div class="mock-glass"></div>
-          </div>
-          <div style="margin-top:16px;background:var(--green-dim);border:1px solid rgba(184,245,90,0.2);border-radius:var(--radius-sm);padding:12px;display:flex;align-items:center;gap:10px;">
-            <div style="font-size:20px">🤖</div>
-            <div>
-              <div style="font-size:12px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:2px;">AI COACH</div>
-              <div style="font-size:12px;color:var(--muted)">"Great streak! Add 5kg to your squat today."</div>
+            <div class="mock-ai">
+              <span class="mock-ai-ico">🤖</span>
+              <div>
+                <div class="mock-ai-lbl">AI Coach</div>
+                <div class="mock-ai-txt" id="mock-ai-txt">Great streak! Add 5kg to your squat — you're ready.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -945,80 +381,99 @@
 
 <!-- CTA -->
 <div class="cta-section">
-  <div class="cta-glow"></div>
-  <div class="reveal" style="position:relative;z-index:1">
-    <div class="cta-free-badge">FREE FOREVER</div>
-    <h2 class="cta-title">READY TO<br><span class="gold-shimmer">FORGE?</span></h2>
-    <p class="cta-sub">Join Ironpath and get your personalized AI training plan in under 2 minutes.</p>
-    <button class="btn-primary btn-xl" onclick="goAuth('signup')">Create free account</button>
-    <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card required · Cancel anytime</div>
+  <div class="cta-grid"></div>
+  <div class="cta-inner reveal">
+    <div class="cta-tag">// Free forever · No credit card · 2 min setup</div>
+    <h2 class="cta-h">READY TO<br><span>START?</span></h2>
+    <p class="cta-sub">Get your personalized AI training plan in under 2 minutes. No cost, no catches, no excuses.</p>
+    <a class="btn-nav-cta btn-cta-xl" href="/app?auth=signup">Create free account →</a>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">IRONPATH</div>
-  <div>Built for athletes. Powered by AI.</div>
-  <div style="display:flex;gap:20px">
-    <button class="btn-ghost" style="padding:7px 16px;font-size:13px" onclick="goAuth('login')">Sign in</button>
-    <button class="btn-primary" style="padding:7px 16px;font-size:13px" onclick="goAuth('signup')">Sign up free</button>
+  <div class="f-brand">IRONPATH</div>
+  <div class="f-copy">Built for athletes. Powered by AI.</div>
+  <div class="f-actions">
+    <a class="btn-nav-ghost" href="/app?auth=login" style="padding:7px 18px;font-size:12px;">Sign in</a>
+    <a class="btn-nav-cta" href="/app?auth=signup" style="padding:8px 18px;font-size:12px;">Get started</a>
   </div>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-logo">IRONPATH</div>
-    <div class="modal-subtitle">Your AI-powered fitness platform</div>
-
-    <div class="modal-tabs">
-      <button class="modal-tab active" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
-      <button class="modal-tab" id="tab-login" onclick="switchTab('login')">Sign in</button>
-    </div>
-
-    <div class="modal-features" id="modal-features">
-      <div class="modal-feature">AI personal coach included</div>
-      <div class="modal-feature">Smart nutrition & hydration tracking</div>
-      <div class="modal-feature">Workout programs & weekly planner</div>
-      <div class="modal-feature">XP, levels & achievement system</div>
-      <div class="modal-feature">Cloud sync across all devices</div>
-      <div class="modal-feature">100% free, forever</div>
-    </div>
-
-    <div class="modal-divider">or</div>
-
-    <button class="btn-primary btn-full" id="modal-cta" onclick="goToApp()">
-      Create free account →
-    </button>
-    <div class="groundwork-link">
-      Already have an account? <a href="#" onclick="switchTab('login');return false;">Sign in</a>
-    </div>
-  </div>
-</div>
-
 <script>
-  // Direct nav to real app auth (no fake landing modal)
-  function goAuth(tab) {
-    window.location.href = '/app?auth=' + (tab === 'login' ? 'login' : 'signup');
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+}, {passive:true});
+
+// Scroll reveal
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Animate bar widths when mock is visible
+const barWidths = {bf1:'84%', bf2:'78%', bf3:'65%', bf4:'90%'};
+const barsObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    Object.entries(barWidths).forEach(([cls, w]) => {
+      document.querySelector('.'+cls).style.width = w;
+    });
+    counter('mlvl', 12, 1400);
+    counter('mxp', 2840, 1600);
+    counter('mstreak', 14, 1100);
+    barsObs.disconnect();
   }
+}, {threshold:0.3});
+const mockEl = document.getElementById('mockapp');
+if (mockEl) barsObs.observe(mockEl);
 
-  // Legacy modal kept hidden — old buttons all call goAuth() now
-  function openModal(tab) { goAuth(tab); }
-  function closeModal() { const el = document.getElementById('modal-overlay'); if (el) el.classList.remove('open'); }
-  function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
-  function switchTab(tab) { goAuth(tab); }
-  function goToApp() { goAuth('signup'); }
+// Counter animation
+function counter(id, target, dur) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const s = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - s) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * e).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  })(s);
+}
 
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-  }, { threshold: 0.1 });
+// Hero stat counters
+setTimeout(() => {
+  // Rating with decimal
+  const rEl = document.getElementById('cnt-rating');
+  if (rEl) {
+    const s = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - s) / 1400, 1);
+      const e = 1 - Math.pow(1 - p, 3);
+      rEl.textContent = (e * 4.9).toFixed(1);
+      if (p < 1) requestAnimationFrame(tick);
+    })(s);
+  }
+  counter('cnt-feat', 9, 1100);
+}, 600);
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // Keyboard
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+// Rotating AI messages
+const msgs = [
+  "Great streak! Add 5kg to your squat today.",
+  "Your protein intake is on track — keep it up!",
+  "14-day streak! You're building a real habit now.",
+  "Recovery day — focus on mobility and hydration.",
+  "Push past the plateau: try supersets today.",
+  "You're in the top 10% for consistency this week."
+];
+let mIdx = 0;
+setInterval(() => {
+  mIdx = (mIdx + 1) % msgs.length;
+  const el = document.getElementById('mock-ai-txt');
+  if (el) { el.style.opacity = '0'; setTimeout(() => { el.textContent = msgs[mIdx]; el.style.opacity = '1'; }, 280); }
+}, 3200);
+const aiEl = document.getElementById('mock-ai-txt');
+if (aiEl) aiEl.style.transition = 'opacity .28s';
 </script>
 </body>
 </html>
